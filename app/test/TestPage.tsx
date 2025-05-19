@@ -1,10 +1,10 @@
+import { usePrompt } from "@/hooks/usePrompt";
+import { useScripts } from "@/hooks/useScripts";
+import { getGeminiCompletions } from "@/services/geminiClient";
+import { getFormhtml } from "@/services/getFormhtml";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Button, StyleSheet, TextInput, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { getGeminiCompletions } from "../api/geminiClient";
-import { usePrompt } from "../hooks/usePrompt";
-import { useScripts } from "../hooks/useScripts";
-import { getFormhtml } from "../services/getFormhtml";
 
 export default function TestPage() {
   const [webviewKey, setWebviewKey] = useState(0);

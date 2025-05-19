@@ -1,25 +1,33 @@
-import { IconSymbol } from "@/app-example/components/ui/IconSymbol.ios";
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
-import { useThemeColor } from "./hooks/useThemeColor";
 export default function Index() {
   const router = useRouter();
+  const colors = useThemeColor()
+  
   return (
     <ThemedView style={{ ...styles.rootContainer }}>
       <View style={styles.hedingView}>
 
-        <ThemedText type="title" >Docublink</ThemedText>
-        <ThemedText type="subtitle"  >Your documents, your way</ThemedText>
+        <ThemedText type="title" style={{fontWeight: "800"}}>Docublink</ThemedText>
+        <ThemedText type="subtitle" style={{color: colors.text_colors.secondary_text}}>Your details, everywhere - instantly</ThemedText>
+
       </View>
       <View style={styles.buttonView}>
-        <ThemedButton style={{...styles.container, backgroundColor: useThemeColor({}, "text")}} type="secondary" onPress={() => router.push("/test/TestPage")}>
-          <ThemedText style={{  color: useThemeColor({}, "textWhite") }} type="subtitle">Get Started
-            
+        <ThemedButton style={{ ...styles.container }} type="neutral_default" onPress={() => router.replace("/(logged-in)/(tabs)")}>
+          <ThemedText style={{ color:colors.text_colors.primary_text}} type="subtitle">Login
+
           </ThemedText>
-        <IconSymbol name="arrowtriangle.right" size={20} color={useThemeColor({}, "textWhite")}/>
+          {/* <Ionicons name="log-in" size={32} color={colors.button_colors.primary} /> */}
+        </ThemedButton>
+        <ThemedButton style={{ ...styles.container}} type="neutral_default" onPress={() => router.replace("/(logged-in)/(tabs)")}>
+          <ThemedText style={{ color:colors.text_colors.primary_text}} type="subtitle">Signup 
+
+          </ThemedText>
+            {/* <Ionicons name="" size={32} color={colors.button_colors.primary} /> */}
         </ThemedButton>
       </View>
     </ThemedView>
@@ -27,19 +35,20 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     display: "flex",
-    width:"80%",
+    width: "80%",
     alignItems: 'center',
     justifyContent: 'center',
   },
   rootContainer: {
     flex: 1,
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 300,
+    paddingTop: 100,
     paddingBottom: 150,
   },
   text: {
@@ -54,8 +63,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonView: {
-   display: "flex",
-    flexDirection: "row",
+    display: "flex",
+    gap: 10,
+    width: "100%",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   }

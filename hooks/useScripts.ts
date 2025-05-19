@@ -1,4 +1,4 @@
-import { scripts } from "../constants/scripts";
+import { scripts } from "@/constants/scripts";
 
 export const useScripts = (scriptName: keyof typeof scripts) => {
 

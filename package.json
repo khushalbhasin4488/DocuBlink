@@ -41,7 +41,10 @@
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "undefined": "@expo/vector-icons/Ionicons",
+    "zustand": "^5.0.4",
+    "@expo/ui": "~0.1.1-alpha.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

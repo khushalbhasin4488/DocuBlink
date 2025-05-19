@@ -1,19 +1,19 @@
-import { useThemeColor } from "@/app/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
 import { Pressable, PressableProps, StyleSheet } from "react-native";
 import { ThemedText } from "./ThemedText";
 
-
 export type ThemedbuttonProps = PressableProps &  {
-    type: "primary" |  "hollow" | "danger" | "secondary"
+    type: keyof typeof Colors.button_colors; 
+    style?: any;
 }
-export function ThemedButton({type,style,  ...props}: ThemedbuttonProps) {
+export function ThemedButton({type ,style,  ...props}: ThemedbuttonProps) {
   return (
     <Pressable
-    style={[
-      styles.button,
-      type === "hollow" ? styles.hollow : type === "danger" ? styles.danger : {backgroundColor: useThemeColor({}, type)}, 
-      typeof style === 'function' ? {} : style
-    ]}
+    style={{
+      ...styles.button,
+      backgroundColor: Colors.button_colors[type],
+      ...style,
+    }}
       {...props}
     >
       <ThemedText type="subtitle">
@@ -28,14 +28,21 @@ export function ThemedButton({type,style,  ...props}: ThemedbuttonProps) {
 
 const styles = StyleSheet.create({
     button: {
-        width: "100%",
-        height: 50,
+      padding: 10,
         borderRadius: 10,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        fontSize: 16,
+        lineHeight: 24,
+        fontWeight: "600",
+        fontFamily: "Inter",
+        textTransform: "uppercase",
+        letterSpacing: 0.5,
+        textDecorationLine: "none",
+        textDecorationStyle: "solid",
+        textDecorationColor: "black",
+        textAlignVertical: "center",
     }, 
-    hollow: {
-        backgroundColor: "blue",
-    }, 
-    danger: {
-        backgroundColor: "red",
-    }
 })
