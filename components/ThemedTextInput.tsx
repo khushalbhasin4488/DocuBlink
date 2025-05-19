@@ -1,7 +1,7 @@
 import { useThemeColor } from "@/hooks/useThemeColor"
 import { StyleSheet, TextInput } from "react-native"
 
-export const ThemedTextInput = ({input, setInput}: {input: string,setInput: (x: string)=>void}) => {
+export const ThemedTextInput = ({value, setValue, placeholder, style}: {value: string,setValue: (x: string)=>void, placeholder: string, style: any}) => {
     const colors = useThemeColor()
     return (
           <TextInput
@@ -12,11 +12,12 @@ export const ThemedTextInput = ({input, setInput}: {input: string,setInput: (x: 
                 color: colors.text_colors.primary_text,
                 borderColor: colors.button_colors.primary,
               },
+              style
             ]}
-            placeholder="gemini key"
+            placeholder={placeholder}
             placeholderTextColor={colors.text_colors.secondary_text}
-            value={input}
-            onChangeText={setInput}
+            value={value}
+            onChangeText={setValue}
             autoFocus
           />
     )
@@ -24,11 +25,9 @@ export const ThemedTextInput = ({input, setInput}: {input: string,setInput: (x: 
 const styles = StyleSheet.create({
   input: {
     width: '100%',
-    height: 50,
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 15,
-    marginBottom: 20,
     fontSize: 16,
   },
 })
