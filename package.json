@@ -38,10 +38,13 @@
     "react-native-cheerio": "^1.0.0-rc.4",
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "~2.24.0",
+    "react-native-pager-view": "^6.8.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-reanimated-carousel": "^4.0.2",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
+    "react-native-simple-dialogs": "^2.1.0",
+    "react-native-table-component": "^1.2.2",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "undefined": "@expo/vector-icons/Ionicons",
@@ -50,6 +53,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
+    "@types/react-native-table-component": "^1.2.8",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"

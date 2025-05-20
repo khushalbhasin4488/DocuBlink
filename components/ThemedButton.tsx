@@ -9,11 +9,11 @@ export type ThemedbuttonProps = PressableProps &  {
 export function ThemedButton({type ,style,  ...props}: ThemedbuttonProps) {
   return (
     <Pressable
-    style={{
-      ...styles.button,
-      backgroundColor: Colors.button_colors[type],
-      ...style,
-    }}
+    style={[
+      styles.button,
+      {backgroundColor: Colors.button_colors[type]},
+      style,
+    ]}
       {...props}
     >
       <ThemedText type="subtitle">

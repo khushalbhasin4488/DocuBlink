@@ -1,7 +1,13 @@
 import { useThemeColor } from "@/hooks/useThemeColor"
-import { StyleSheet, TextInput } from "react-native"
+import { StyleSheet, TextInput, TextInputProps } from "react-native"
 
-export const ThemedTextInput = ({value, setValue, placeholder, style}: {value: string,setValue: (x: string)=>void, placeholder: string, style: any}) => {
+type ThemedTextInputProps = TextInputProps & {
+    value: string
+    setValue: (x: string) => void
+    placeholder: string
+}
+
+export const ThemedTextInput = ({value, setValue, placeholder, style, ...otherProps}: ThemedTextInputProps) => {
     const colors = useThemeColor()
     return (
           <TextInput
@@ -19,6 +25,7 @@ export const ThemedTextInput = ({value, setValue, placeholder, style}: {value: s
             value={value}
             onChangeText={setValue}
             autoFocus
+            {...otherProps}
           />
     )
 }
