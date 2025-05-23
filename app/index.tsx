@@ -2,12 +2,37 @@ import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import {
+  GoogleSignin,
+  GoogleSigninButton
+} from '@react-native-google-signin/google-signin';
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 export default function Index() {
   const router = useRouter();
   const colors = useThemeColor()
+  const GoogleLogin = async () => {
+    // check if users' device has google play services
+    await GoogleSignin.hasPlayServices();
   
+    // initiates signIn process
+    const userInfo = await GoogleSignin.signIn();
+    return userInfo;
+  };
+  
+  const googleSignIn = async () => {
+    try {
+      const response = await GoogleLogin();
+  
+      // retrieve user data
+      const { idToken, user } = response.data ?? {};
+      if (idToken) {
+        console.log('User data', user);
+      }
+    } catch (error) {
+      console.log('Error', error);
+    }
+  }; 
   return (
     <ThemedView style={{ ...styles.rootContainer }}>
       <View style={styles.hedingView}>
@@ -29,6 +54,7 @@ export default function Index() {
           </ThemedText>
             {/* <Ionicons name="" size={32} color={colors.button_colors.primary} /> */}
         </ThemedButton>
+        <GoogleSigninButton onPress={googleSignIn}/>
       </View>
     </ThemedView>
   );

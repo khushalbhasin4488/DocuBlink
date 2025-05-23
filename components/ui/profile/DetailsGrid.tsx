@@ -1,6 +1,6 @@
 import { useThemeColor } from '@/hooks/useThemeColor';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Row, Rows, Table } from 'react-native-table-component';
 
 const tableData = {
@@ -17,6 +17,7 @@ const tableData = {
 export const DetailsGrid = () => {
     const colors = useThemeColor()
     const [data, setData] = useState(tableData);
+    const windowWidth = Dimensions.get('window').width;
 
     const handleEdit = (index: number) => {
         // TODO: Implement edit functionality
@@ -55,31 +56,55 @@ export const DetailsGrid = () => {
     ]);
 
     return (
-        <View style={styles.container}>
-            <Table borderStyle={{ borderWidth: 4, borderColor: colors.button_colors.primary }}>
-                <Row data={data.tableHead} style={[styles.head, {backgroundColor:colors.button_colors.primary}]} textStyle={styles.headText} />
-                <Rows data={tableDataWithButtons} textStyle={styles.text} />
-            </Table>
-        </View>
+        <ScrollView style={styles.scrollContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+                <View style={[styles.container, { minWidth: windowWidth }]}>
+                    <Table borderStyle={{ borderWidth: 4, borderColor: colors.button_colors.primary }}>
+                        <Row 
+                            data={data.tableHead} 
+                            style={[styles.head, {backgroundColor: colors.button_colors.primary}]} 
+                            textStyle={styles.headText}
+                            widthArr={[150, 150, 200]}
+                        />
+                        <Rows 
+                            data={tableDataWithButtons} 
+                            textStyle={styles.text}
+                            widthArr={[150, 150, 200]}
+                        />
+                    </Table>
+                </View>
+            </ScrollView>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { 
+    scrollContainer: {
         flex: 1,
-         padding: 10,
-          justifyContent: 'center',
+        width: '100%',
+    },
+    container: { 
+        padding: 10,
+        justifyContent: 'center',
     },
     head: {
-         height: 44, 
-          
+        height: 44,
+        width: '100%',
     },
-    headText: { fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: 'white' },
-    text: { margin: 6, 
+    headText: { 
+        fontSize: 20, 
+        fontWeight: 'bold', 
+        textAlign: 'center', 
+        color: 'white',
+        paddingHorizontal: 10,
+    },
+    text: { 
+        margin: 6, 
         fontSize: 16,
-         fontWeight: 'bold', 
-         textAlign: 'center'
-         },
+        fontWeight: 'bold', 
+        textAlign: 'center',
+        paddingHorizontal: 10,
+    },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
