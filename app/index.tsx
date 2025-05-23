@@ -8,6 +8,17 @@ import {
 } from '@react-native-google-signin/google-signin';
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
+
+
+
+
+GoogleSignin.configure({
+      webClientId: process.env.EXPO_PUBLIC_WEB_ID,
+      scopes: ['profile', 'email'], 
+      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+      forceCodeForRefreshToken: false,
+      iosClientId: process.env.EXPO_PUBLIC_IOS_ID,
+    })
 export default function Index() {
   const router = useRouter();
   const colors = useThemeColor()
