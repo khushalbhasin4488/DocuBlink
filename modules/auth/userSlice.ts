@@ -1,35 +1,40 @@
-import { User } from "firebase/auth";
+
 import { create } from "zustand";
 
-interface UserState {
-    firebaseUser: User | null;
-    isAuthenticated: boolean;
+interface userState {
+    id: string;
+    name: string | null;
+    email: string;
+    photo: string | null;
+    familyName: string | null;
+    givenName: string | null;
 }
 
 interface UserStore {
-    user: UserState;
-    setUser: (user: UserState) => void;
+    user: userState;
+    setUser: (user: userState) => void;
     clearUser: () => void;
-    setFirebaseUser: (user: User | null) => void;
+    
 }
 
 export const useUserStore = create<UserStore>((set) => ({
     user: {
-        firebaseUser: null,
-        isAuthenticated: false
+        id: "",
+        name: null,
+        email: "",
+        photo: null,
+        familyName: null,
+        givenName: null
     },
-    setUser: (user: UserState) => set({ user }),
+    setUser: (user: userState) => set({ user }),
     clearUser: () => set({ 
         user: {
-            firebaseUser: null,
-            isAuthenticated: false
+            id: "",
+            name: null,
+            email: "",
+            photo: null,
+            familyName: null,
+            givenName: null
         }
     }),
-    setFirebaseUser: (user: User | null) => set((state) => ({
-        user: {
-            ...state.user,
-            firebaseUser: user,
-            isAuthenticated: !!user
-        }
-    }))
 }));

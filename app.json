@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.khushalbhasin.Docublink"
+      "bundleIdentifier": "com.khushalbhasin.Docublink",
+      "config":{
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "permissions": [
@@ -49,7 +52,18 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.713015174361-1mthvomoj9a9619up32orpf84jmntrh4"
         }
-      ]
+      ],
+       
+        [
+          "expo-secure-store",
+          {
+            "configureAndroidBackup": true,
+            "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+          }
+        ]
+      
+  
+
     ],
     "experiments": {
       "typedRoutes": true

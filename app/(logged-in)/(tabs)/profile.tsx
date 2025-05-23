@@ -5,23 +5,66 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { DetailsGrid } from "@/components/ui/profile/DetailsGrid";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { StackActions } from '@react-navigation/native';
+import { useNavigation } from "expo-router";
+import { useEffect, useState } from "react";
+import { Image, ScrollView, StyleSheet } from "react-native";
 
 export default function ProfileScreen() {
     const colors = useThemeColor()
+    const user = GoogleSignin.getCurrentUser()
     const [deleteDataVisible, setDeleteDataVisible] = useState(false)
     const [logoutVisible, setLogoutVisible] = useState(false)
     const [showEditGrid, setShowEditGrid] = useState(false)
+    const [loggedOut    , setLoggedOut] = useState(false)
+    const [deleteData, setDeleteData] = useState(false)
+
+    const navigation = useNavigation()
+    const handleLogout = async()=>{
+        try{
+
+            await GoogleSignin.signOut()
+            setLoggedOut(false)
+            navigation.dispatch(
+                StackActions.replace("index") 
+            )
+        }
+        catch(err){
+            console.error(err)
+        }
+    } 
+    useEffect(() => {
+        if (loggedOut) {
+            console.log("User logged out");
+            handleLogout();
+            
+          
+        }
+    }
+    , [loggedOut]);
+
+    useEffect(() => {
+        if (deleteData) {
+            // Perform delete data action here
+            console.log("User data deleted");
+            setDeleteData(false);
+        }
+    }
+    , [deleteData]);
+
     return (
         <ScrollView style={[styles.rootContainer, {backgroundColor:colors.backgrounds.main_background}]}>
+                <ThemedView style={styles.topContainer}>
+                    {user?.user.photo && <Image source={{ uri: user?.user.photo }} style={styles.profileImage} />}
             <ThemedText type="subtitle">
-                John Doe
+               {user?.user.name}
             </ThemedText>
+            </ThemedView>
             <SizeBox size={20} />
-            <ThemedDialog setVisible={setLogoutVisible} visible={logoutVisible} cancelTitle="Cancel" confirmTitle="Logout" description="Are you sure you want to logout" />
+            <ThemedDialog setVisible={setLogoutVisible} visible={logoutVisible} result={loggedOut} setresult={setLoggedOut} cancelTitle="Cancel" confirmTitle="Logout" description="Are you sure you want to logout" />
 
-            <ThemedDialog setVisible={setDeleteDataVisible} visible={deleteDataVisible} cancelTitle="Cancel" confirmTitle="Delete" description="Are you sure you want to delete your data?" />
+            <ThemedDialog setVisible={setDeleteDataVisible} visible={deleteDataVisible} result={deleteData} setresult={setDeleteData} cancelTitle="Cancel" confirmTitle="Delete" description="Are you sure you want to delete your data?" />
 
 
             <ThemedView style={styles.listContainer}>
@@ -82,5 +125,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         gap: 10,
     },
-
+    topContainer:{
+        display: "flex",
+        width: "100%",
+        height: "14%",
+        zIndex:50,
+        alignItems:"center",
+        
+        flexDirection: "row",
+        gap: 10,
+    },
+    profileImage: {
+        height: 30, 
+        width: 30,
+        borderRadius: 50,
+        
+    },
 })

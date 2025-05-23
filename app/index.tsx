@@ -1,71 +1,78 @@
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { FIREBASE_DB } from "@/firebaseConfig";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { Ionicons } from "@expo/vector-icons";
 import {
-  GoogleSignin,
-  GoogleSigninButton
+  GoogleSignin
 } from '@react-native-google-signin/google-signin';
 import { useRouter } from "expo-router";
+import { addDoc, collection } from "firebase/firestore";
 import { StyleSheet, View } from "react-native";
 
 
-
-
 GoogleSignin.configure({
-      webClientId: process.env.EXPO_PUBLIC_WEB_ID,
-      scopes: ['profile', 'email'], 
-      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
-      forceCodeForRefreshToken: false,
-      iosClientId: process.env.EXPO_PUBLIC_IOS_ID,
-    })
+  webClientId: process.env.EXPO_PUBLIC_WEB_ID,
+  scopes: ['profile', 'email'],
+  offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+  forceCodeForRefreshToken: false,
+  iosClientId: process.env.EXPO_PUBLIC_IOS_ID,
+})
+
 export default function Index() {
   const router = useRouter();
   const colors = useThemeColor()
-  const GoogleLogin = async () => {
-    // check if users' device has google play services
-    await GoogleSignin.hasPlayServices();
-  
-    // initiates signIn process
-    const userInfo = await GoogleSignin.signIn();
-    return userInfo;
-  };
-  
-  const googleSignIn = async () => {
-    try {
-      const response = await GoogleLogin();
-  
-      // retrieve user data
-      const { idToken, user } = response.data ?? {};
-      if (idToken) {
-        console.log('User data', user);
+  const handleGoogleSignIn = async () => {
+    try{
+
+      // check if users' device has google play services
+      await GoogleSignin.hasPlayServices();
+      
+      // initiates signIn process
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo);
+      if (userInfo.data?.user.email) {
+        let doc = await addDoc(collection(FIREBASE_DB, "users"), {
+          id: userInfo.data?.user.id,
+          email: userInfo.data?.user.email,
+          name: userInfo.data?.user.name,
+          photo: userInfo.data?.user.photo,
+          createdAt: new Date(),
+          
+        })
+        console.log("user inserted in firebase successfully")
+        router.replace("/(logged-in)/(tabs)")
       }
-    } catch (error) {
-      console.log('Error', error);
     }
-  }; 
+    catch(err){
+      console.log("error in sigin " , err)
+    }
+  
+  };
   return (
     <ThemedView style={{ ...styles.rootContainer }}>
       <View style={styles.hedingView}>
+        <ThemedText type="title" style={{ fontWeight: "800" }}>Docublink</ThemedText>
 
-        <ThemedText type="title" style={{fontWeight: "800"}}>Docublink</ThemedText>
-        <ThemedText type="subtitle" style={{color: colors.text_colors.secondary_text}}>Your details, everywhere - instantly</ThemedText>
-
+        <ThemedText type="subtitle" style={{ color: colors.text_colors.secondary_text }}>Your details, everywhere - instantly</ThemedText>
       </View>
       <View style={styles.buttonView}>
-        <ThemedButton style={{ ...styles.container }} type="neutral_default" onPress={() => router.replace("/(logged-in)/(tabs)")}>
-          <ThemedText style={{ color:colors.text_colors.primary_text}} type="subtitle">Login
-
+        <ThemedButton style={{ ...styles.container }} type="neutral_default" onPress={handleGoogleSignIn}>
+          <ThemedText style={{ color: colors.text_colors.primary_text }} type="subtitle">SignIn
           </ThemedText>
+
+          <View style={{ paddingLeft: 8 }}>
+            <Ionicons name="logo-google" size={18} />
+          </View>
           {/* <Ionicons name="log-in" size={32} color={colors.button_colors.primary} /> */}
         </ThemedButton>
-        <ThemedButton style={{ ...styles.container}} type="neutral_default" onPress={() => router.replace("/(logged-in)/(tabs)")}>
+        {/* <ThemedButton style={{ ...styles.container}} type="neutral_default" onPress={googleSignIn}>
           <ThemedText style={{ color:colors.text_colors.primary_text}} type="subtitle">Signup 
 
           </ThemedText>
-            {/* <Ionicons name="" size={32} color={colors.button_colors.primary} /> */}
         </ThemedButton>
-        <GoogleSigninButton onPress={googleSignIn}/>
+    */}
       </View>
     </ThemedView>
   );
@@ -74,9 +81,12 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
+    flexDirection: "row",
     width: "80%",
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 10
+
   },
   rootContainer: {
     flex: 1,

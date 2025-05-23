@@ -7,8 +7,8 @@ export default function RootLayout() {
   return (
     <SafeAreaView style={{flex: 1}}>
     <ThemeProvider value={colorScheme=="dark" ? DarkTheme : DefaultTheme}>
-      <Stack >
-        <Stack.Screen name="index" options={{ headerShown: false }}/>
+      <Stack initialRouteName="index"  >
+        <Stack.Screen name="index"  options={{ headerShown: false }}/>
         <Stack.Screen name="test/TestPage" options={{ headerShown: false }}/>
         <Stack.Screen name="(logged-in)" options={{ headerShown: false }}/>
       </Stack>
