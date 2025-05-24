@@ -1,23 +1,19 @@
 import { ThemedView } from "@/components/ThemedView";
-import { InputModal } from "@/components/ui/home/InputModal";
+import { GeminiInputModal } from "@/components/ui/home/GeminiInputModal";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useAiStore } from "@/modules/ai/aiSlice";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 export default function AuthenticatedLayout() {
   const colors = useThemeColor();
   
-  // read user state from zustand
-  const userInput = useAiStore(state=>state.geminiInput);
 
   return (
     <SafeAreaView style={styles.safeArea}>
 <ThemedView style={styles.rootContainer}>
-  <InputModal onClose={()=>{}} visible={userInput==null} />
+  <GeminiInputModal onClose={()=>{}}  />
   
       <Tabs
           screenOptions={{

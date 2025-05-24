@@ -7,25 +7,11 @@ import { SyncSwitch } from "@/components/ui/home/SyncSwitch";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import * as SecureStore from 'expo-secure-store';
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 export default function Index() {
     const [formUrl, setFormUrl] = useState<string>("")
     const colors = useThemeColor()
-  async function save(key : string, value: string) {
-    try {
-      
-      await SecureStore.setItemAsync(key, value);
-    } catch (error) {
-      console.error("Error writing to Firestore: ", error);
-      // Handle the error appropriately - maybe show a user-friendly message
-    }
-  }
-  async function get(key: string){
-    let value = await SecureStore.getItemAsync(key)
-    console.log("value", value)
-  }
     return (
         <ThemedView style={styles.rootContainer}>
             <View style={styles.syncView}>
@@ -55,13 +41,13 @@ export default function Index() {
            <CustomCarousel images={["https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg", "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg"]} />
            
             <ThemedView style={styles.uploadingContainer}>
-                <ThemedView style={{ ...styles.uploadCard, backgroundColor: colors.button_colors.primary }} onTouchEnd={()=>save("something", "something")}>
+                <ThemedView style={{ ...styles.uploadCard, backgroundColor: colors.button_colors.primary }} onTouchEnd={()=>{}}>
                     <Ionicons name="document-text" size={50} color={colors.button_colors.neutral_default} />
                     <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
                         Upload
                     </ThemedText>
                 </ThemedView>
-                <ThemedView style={[{ backgroundColor: colors.button_colors.primary }, styles.uploadCard]} onTouchEnd={()=>get("something")}>
+                <ThemedView style={[{ backgroundColor: colors.button_colors.primary }, styles.uploadCard]} onTouchEnd={()=>{}}>
                     <MaterialIcons name="edit-document" size={50} color={colors.button_colors.neutral_default} />
                     <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
                         Add manually

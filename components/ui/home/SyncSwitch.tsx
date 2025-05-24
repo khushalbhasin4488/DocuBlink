@@ -1,5 +1,5 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useSyncStore } from "@/modules/sync/SyncSlice";
+import { useSyncStore } from "@/store/SyncSlice";
 import { Switch } from "react-native";
 
 export function SyncSwitch(){

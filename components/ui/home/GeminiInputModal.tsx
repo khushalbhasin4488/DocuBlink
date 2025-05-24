@@ -1,31 +1,39 @@
+import { SizeBox } from '@/components/SizeBox';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { useAiStore } from '@/modules/ai/aiSlice';
+import { useSetGeminiKey } from '@/modules/ai/hooks/useSetGeminiKey';
+import { useAiStore } from '@/store/aiSlice';
 import React from 'react';
-import { Modal, StyleSheet, TextInput, View } from 'react-native';
-import { ThemedButton } from '../../../components/ThemedButton';
-import { ThemedText } from '../../../components/ThemedText';
-import { ThemedView } from '../../../components/ThemedView';
+import { ActivityIndicator, Modal, StyleSheet, TextInput, View } from 'react-native';
+import { ThemedButton } from '../../ThemedButton';
+import { ThemedText } from '../../ThemedText';
+import { ThemedView } from '../../ThemedView';
 
 interface InputModalProps {
-  visible: boolean;
+
   onClose: () => void;
 }
 
-export function InputModal({ visible, onClose }: InputModalProps) {
+export function GeminiInputModal({  onClose }: InputModalProps) {
   const colors = useThemeColor();
-  const setGeminiInput  = useAiStore((state) => state.setGeminiInput);
+  const geminiApiKey = useAiStore(state=>state.geminiApiKey)
   const [input, setInput] = React.useState('');
+  const {setGeminiKey, error , loading , message} = useSetGeminiKey()
+  const handleSubmit = async () => {
+    try{
 
-  const handleSubmit = () => {
-    if (input.trim()) {
-      setGeminiInput(input.trim());
-      onClose();
+      if (input.trim()) {
+        await setGeminiKey(input.trim())
+      }
+    }
+    catch(err){
+      console.log(err)
+
     }
   };
 
   return (
     <Modal
-      visible={visible}
+      visible={geminiApiKey==null}
       transparent
       animationType="fade"
       onRequestClose={onClose}
@@ -46,22 +54,36 @@ export function InputModal({ visible, onClose }: InputModalProps) {
                 color: colors.text_colors.primary_text,
                 borderColor: colors.button_colors.primary,
               },
+
             ]}
+
             placeholder="gemini key"
             placeholderTextColor={colors.text_colors.secondary_text}
             value={input}
             onChangeText={setInput}
             autoFocus
           />
+          {error && 
+            <ThemedView style={[{height: 30, width:"100%",
+            borderRadius:9, padding:2,paddingHorizontal: 9, backgroundColor:colors.button_colors.danger}]}>
+              <ThemedText type='defaultSemiBold' style={{color:colors.button_colors.neutral_default}}>
+              {error}
+              </ThemedText>
+              </ThemedView>
+          }
           <View style={styles.buttonContainer}>
             <ThemedButton
-              type="primary"
-              style={styles.button}
+              type={loading ? "info" : "primary"}
+              style={[styles.button]}
               onPress={handleSubmit}
+              disabled = {loading}
             >
-              <ThemedText style={{ color: colors.text_colors.primary_text }}>
+                <ThemedText  style={{ color: colors.button_colors.neutral_default }}>
                 Continue
               </ThemedText>
+              {loading && <SizeBox  size={10}/>}
+
+              {loading && <ActivityIndicator size="small" color={colors.button_colors.primary}/>}
             </ThemedButton>
           </View>
         </ThemedView>
@@ -97,13 +119,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 15,
-    marginBottom: 20,
+    marginBottom: 10,
     fontSize: 16,
   },
   buttonContainer: {
     width: '100%',
   },
   button: {
+    display:"flex",
+    justifyContent:"center",
+    flexDirection:"row",
+    alignItems:"center",
+    gap: 10,
     width: '100%',
+    marginTop:10,
   },
 }); 
