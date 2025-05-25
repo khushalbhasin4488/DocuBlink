@@ -1,6 +1,7 @@
 import { SizeBox } from '@/components/SizeBox';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useSetGeminiKey } from '@/modules/ai/hooks/useSetGeminiKey';
+import { useLoadStates } from '@/modules/secure-storage/hooks/useLoadStates';
 import { useAiStore } from '@/store/aiSlice';
 import React from 'react';
 import { ActivityIndicator, Modal, StyleSheet, TextInput, View } from 'react-native';
@@ -14,15 +15,16 @@ interface InputModalProps {
 }
 
 export function GeminiInputModal({  onClose }: InputModalProps) {
-  const colors = useThemeColor();
-  const geminiApiKey = useAiStore(state=>state.geminiApiKey)
   const [input, setInput] = React.useState('');
-  const {setGeminiKey, error , loading , message} = useSetGeminiKey()
+  const colors = useThemeColor();
+  const geminiApiKeyState = useAiStore(state=>state.geminiApiKeyState);
+  const {loading: loadStatesLoading} = useLoadStates()
+  const {setGeminiKey, error, loading: geminiLoading, message} = useSetGeminiKey()
   const handleSubmit = async () => {
-    try{
+    try {
 
       if (input.trim()) {
-        await setGeminiKey(input.trim())
+        await setGeminiKey(input.trim() )
       }
     }
     catch(err){
@@ -31,9 +33,11 @@ export function GeminiInputModal({  onClose }: InputModalProps) {
     }
   };
 
+
+
   return (
     <Modal
-      visible={geminiApiKey==null}
+      visible={!loadStatesLoading && !geminiApiKeyState }
       transparent
       animationType="fade"
       onRequestClose={onClose}
@@ -73,17 +77,17 @@ export function GeminiInputModal({  onClose }: InputModalProps) {
           }
           <View style={styles.buttonContainer}>
             <ThemedButton
-              type={loading ? "info" : "primary"}
+              type={geminiLoading ? "info" : "primary"}
               style={[styles.button]}
               onPress={handleSubmit}
-              disabled = {loading}
+              disabled = {geminiLoading}
             >
                 <ThemedText  style={{ color: colors.button_colors.neutral_default }}>
                 Continue
               </ThemedText>
-              {loading && <SizeBox  size={10}/>}
+              {geminiLoading&& <SizeBox  size={10}/>}
 
-              {loading && <ActivityIndicator size="small" color={colors.button_colors.primary}/>}
+              {geminiLoading&& <ActivityIndicator size="small" color={colors.button_colors.primary}/>}
             </ThemedButton>
           </View>
         </ThemedView>

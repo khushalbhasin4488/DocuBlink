@@ -5,6 +5,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { DetailsGrid } from "@/components/ui/profile/DetailsGrid";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { handleGoogleLogout } from "@/modules/firebase/utils/auth";
+import { useDeleteStorage } from "@/modules/secure-storage/hooks/useDeleteStorage";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { StackActions } from '@react-navigation/native';
 import { useNavigation } from "expo-router";
@@ -17,32 +19,33 @@ export default function ProfileScreen() {
     const [deleteDataVisible, setDeleteDataVisible] = useState(false)
     const [logoutVisible, setLogoutVisible] = useState(false)
     const [showEditGrid, setShowEditGrid] = useState(false)
-    const [loggedOut    , setLoggedOut] = useState(false)
+    const [loggedOut, setLoggedOut] = useState(false)
     const [deleteData, setDeleteData] = useState(false)
 
     const navigation = useNavigation()
-    const handleLogout = async()=>{
-        try{
+    const {deleteStorage} = useDeleteStorage()
+    const handleLogoutConfirmed = async () => {
+        try {
 
-            await GoogleSignin.signOut()
+            await handleGoogleLogout()
             setLoggedOut(false)
+            await deleteStorage()
             navigation.dispatch(
-                StackActions.replace("index") 
+                StackActions.replace("index")
             )
         }
-        catch(err){
+        catch (err) {
             console.error(err)
         }
-    } 
+    }
     useEffect(() => {
         if (loggedOut) {
             console.log("User logged out");
-            handleLogout();
-            
-          
+            handleLogoutConfirmed();
+
         }
     }
-    , [loggedOut]);
+        , [loggedOut]);
 
     useEffect(() => {
         if (deleteData) {
@@ -51,15 +54,15 @@ export default function ProfileScreen() {
             setDeleteData(false);
         }
     }
-    , [deleteData]);
+        , [deleteData]);
 
     return (
-        <ScrollView style={[styles.rootContainer, {backgroundColor:colors.backgrounds.main_background}]}>
-                <ThemedView style={styles.topContainer}>
-                    {user?.user.photo && <Image source={{ uri: user?.user.photo }} style={styles.profileImage} />}
-            <ThemedText type="subtitle">
-               {user?.user.name}
-            </ThemedText>
+        <ScrollView style={[styles.rootContainer, { backgroundColor: colors.backgrounds.main_background }]}>
+            <ThemedView style={styles.topContainer}>
+                {user?.user.photo && <Image source={{ uri: user?.user.photo }} style={styles.profileImage} />}
+                <ThemedText type="subtitle">
+                    {user?.user.name}
+                </ThemedText>
             </ThemedView>
             <SizeBox size={20} />
             <ThemedDialog setVisible={setLogoutVisible} visible={logoutVisible} result={loggedOut} setresult={setLoggedOut} cancelTitle="Cancel" confirmTitle="Logout" description="Are you sure you want to logout" />
@@ -76,7 +79,7 @@ export default function ProfileScreen() {
                         Edit Details
                     </ThemedText>
                 </ThemedButton>
-                {showEditGrid && <DetailsGrid  />}
+                {showEditGrid && <DetailsGrid />}
                 <ThemedButton type="neutral_default" style={[{
                     borderColor: colors.button_colors.primary,
                 }, styles.listView]} onPress={() => { setDeleteDataVisible(true) }}>
@@ -125,20 +128,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         gap: 10,
     },
-    topContainer:{
+    topContainer: {
         display: "flex",
         width: "100%",
         height: "14%",
-        zIndex:50,
-        alignItems:"center",
-        
+        zIndex: 50,
+        alignItems: "center",
+
         flexDirection: "row",
         gap: 10,
     },
     profileImage: {
-        height: 30, 
+        height: 30,
         width: 30,
         borderRadius: 50,
-        
+
     },
 })

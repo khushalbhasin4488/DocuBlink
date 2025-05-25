@@ -13,6 +13,8 @@ GoogleSignin.configure({
   iosClientId: process.env.EXPO_PUBLIC_IOS_ID,
 })
 export default function RootLayout() {
+
+
   let colorScheme = useColorScheme()
   return (
     <SafeAreaView style={{flex: 1}}>

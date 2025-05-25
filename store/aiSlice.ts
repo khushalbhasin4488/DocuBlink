@@ -2,13 +2,16 @@
 import { create } from 'zustand';
 
 interface AiStore{
-  geminiApiKey: string | null;
+  geminiApiKeyState: string | null;
   loading:boolean;
-  setGeminiApiKey: (input: string |null) => void;
+  setGeminiApiKeyState: (input: string |null) => void;
+  reset: () => void;
 }
 
 export const useAiStore= create<AiStore>((set) => ({
-  geminiApiKey: null,
+  geminiApiKeyState: null,
   loading: false,
-  setGeminiApiKey: (input: string | null) => set({ geminiApiKey: input }),
+  setGeminiApiKeyState: (input: string | null) => set({ geminiApiKeyState: input }),
+  reset: () => set({ geminiApiKeyState: null, loading: false
+  })
 })); 

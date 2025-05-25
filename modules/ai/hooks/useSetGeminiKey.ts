@@ -1,4 +1,4 @@
-import { handleSetStoreSecure } from "@/modules/secure-storage/utils";
+import { secureStoreClient } from "@/modules/secure-storage";
 import { useAiStore } from "@/store/aiSlice";
 import { useState } from "react";
 import { getGeminiResult } from "../utils/getGeminiResult";
@@ -7,7 +7,9 @@ export const useSetGeminiKey = ()=>{
     const [message, setMessage] = useState<string>("");
     const [loading, setLoading] = useState< boolean> (false);
     const [error, setError] = useState<string | null>(null);
-    const setGeminiApiKey = useAiStore(state => state.setGeminiApiKey);
+
+    const setGeminiApiKeyState = useAiStore(state => state.setGeminiApiKeyState);
+    
     const setGeminiKey = async (apiKey: string) => {
         setLoading(true);
         setError(null);
@@ -15,8 +17,13 @@ export const useSetGeminiKey = ()=>{
         try {
             let geminiresponse = await getGeminiResult("hello how are you", apiKey)
             console.log(geminiresponse)
-            await handleSetStoreSecure({geminiApiKey: apiKey})
-            setGeminiApiKey(apiKey);
+            await secureStoreClient.handleSetStoreSecure(
+                {
+                    key: "geminiApiKey",
+                    geminiApiKey: apiKey
+                }
+            )
+            setGeminiApiKeyState(apiKey);
             setMessage("Gemini API key set successfully.");
         
 
