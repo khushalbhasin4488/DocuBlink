@@ -3,15 +3,23 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedView } from "@/components/ThemedView";
 import { CustomCarousel } from "@/components/ui/home/CustomCarousel";
+import { DataDrawer, DataDrawerRef } from "@/components/ui/home/DataDrawer";
 import { SyncSwitch } from "@/components/ui/home/SyncSwitch";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
+
 export default function Index() {
     const [formUrl, setFormUrl] = useState<string>("")
     const colors = useThemeColor()
+    const drawerRef = useRef<DataDrawerRef>(null);
+
+    const handleAddManually = () => {
+        drawerRef.current?.present();
+    };
+
     return (
         <ThemedView style={styles.rootContainer}>
             <View style={styles.syncView}>
@@ -38,21 +46,27 @@ export default function Index() {
                     ⓘ save your information to fill in google forms automatically .
                 </ThemedText>
             </ThemedView>
+     
            <CustomCarousel images={["https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg", "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg"]} />
            
             <ThemedView style={styles.uploadingContainer}>
-                <ThemedView style={{ ...styles.uploadCard, backgroundColor: colors.button_colors.primary }} onTouchEnd={()=>{}}>
+                <ThemedView style={{ ...styles.uploadCard, width:"50%",backgroundColor: colors.button_colors.primary }} onTouchEnd={()=>{}}>
                     <Ionicons name="document-text" size={50} color={colors.button_colors.neutral_default} />
                     <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
                         Upload
                     </ThemedText>
                 </ThemedView>
-                <ThemedView style={[{ backgroundColor: colors.button_colors.primary }, styles.uploadCard]} onTouchEnd={()=>{}}>
-                    <MaterialIcons name="edit-document" size={50} color={colors.button_colors.neutral_default} />
-                    <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
-                        Add manually
-                    </ThemedText>
-                </ThemedView>
+                <DataDrawer ref={drawerRef}>
+                    <ThemedView 
+                        style={[{ backgroundColor: colors.button_colors.primary }, styles.uploadCard]} 
+                        onTouchEnd={handleAddManually}
+                    >
+                        <MaterialIcons name="edit-document" size={50} color={colors.button_colors.neutral_default} />
+                        <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
+                            Add manually
+                        </ThemedText>
+                    </ThemedView>
+                </DataDrawer>
             </ThemedView>
             <ThemedView style={styles.bottomContainer}>
 
@@ -105,7 +119,6 @@ const styles = StyleSheet.create({
 
     },
     uploadCard: {
-        width: "50%",
         height: 100,
         borderRadius: 10,
         display: "flex",
