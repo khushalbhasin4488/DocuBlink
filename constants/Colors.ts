@@ -35,6 +35,7 @@ export const Colors =
     "text_colors": {
         "primary_text": "#4B3B2A",
         "secondary_text": "#7D6A55",
+        "tertiary_text": "#A68A56",
         "disabled_text": "#B7A99A"
     },
     "button_colors": {

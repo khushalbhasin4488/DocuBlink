@@ -81,7 +81,7 @@ export default function Index() {
 const styles = StyleSheet.create({
     formInput: {
         marginVertical: 20,
-        height:"100%",
+        height: 43,
     },
     formViewDescription: {
         lineHeight: 18,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     formViewContainer: {
-        height: "15%",
+        height: "20%",
         paddingVertical:15,
         margin:0,
         display: "flex",
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     },
 
     formView: {
-        height: "50%",
+        height: "40%",
         display: "flex",
         flexDirection: "row",
         paddingHorizontal: 20,

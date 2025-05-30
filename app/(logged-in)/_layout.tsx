@@ -27,8 +27,18 @@ export default function AuthenticatedLayout() {
             tabBarInactiveTintColor: colors.text_colors.secondary_text,
             tabBarStyle: {
               backgroundColor: colors.backgrounds.card_surface,
-              paddingTop: 10,
-              paddingBottom: 10
+              height: 60,
+              paddingBottom: 8,
+              paddingTop: 8,
+              elevation: 0,
+              borderTopWidth: 0,
+            },
+            tabBarItemStyle: {
+              height: 44,
+            },
+            tabBarLabelStyle: {
+              fontSize: 12,
+              marginTop: 4,
             },
           }}
         >

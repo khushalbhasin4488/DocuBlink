@@ -78,14 +78,14 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignContent: "center",
         alignItems: "center",
-        height: 80,
+        minHeight: 40,
         width: "100%",
     },
     optionContainer: {
         flexDirection: "row",
         width: "100%",
         justifyContent: "space-around",
-        paddingVertical: 20,
+        paddingTop:15,
         backgroundColor: "transparent",
     }
 })

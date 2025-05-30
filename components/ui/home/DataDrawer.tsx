@@ -3,7 +3,7 @@ import { Colors } from '@/constants/Colors';
 import {
     BottomSheetModal,
     BottomSheetModalProvider,
-    BottomSheetView,
+    BottomSheetScrollView
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
 import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
@@ -43,10 +43,12 @@ export const DataDrawer = forwardRef<DataDrawerRef, { children: React.ReactNode 
                             enablePanDownToClose
                             handleIndicatorStyle={styles.handleIndicator}
                             backgroundStyle={styles.bottomSheetBackground}
+                            enableContentPanningGesture={true}
+                            enableHandlePanningGesture={true}
                         >
-                            <BottomSheetView style={styles.contentContainer}>
+                            <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
                                 <DataDrawerPage/>
-                            </BottomSheetView>
+                            </BottomSheetScrollView>
                         </BottomSheetModal>
                     </BottomSheetModalProvider>
                 </Portal>
@@ -68,19 +70,18 @@ const styles = StyleSheet.create({
     },
     bottomSheetBackground: {
         backgroundColor: Colors.button_colors.neutral_default,
-        
     },
     contentContainer: {
-        flex: 1,
-        alignItems: 'center',
-        
+        flexGrow: 1,
+        width: '100%',
+        // paddingBottom: 100,
     },
     contentText: {
         fontSize: 18,
         fontWeight: '600',
     },
     handleIndicator: {
-    backgroundColor:Colors.button_colors.primary,
+        backgroundColor: Colors.button_colors.primary,
         width: 40,
     },
 });

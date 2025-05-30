@@ -65,7 +65,7 @@ export default function ProfileScreen() {
                 </ThemedText>
             </ThemedView>
             <SizeBox size={20} />
-            <ThemedDialog setVisible={setLogoutVisible} visible={logoutVisible} result={loggedOut} setresult={setLoggedOut} cancelTitle="Cancel" confirmTitle="Logout" description="Are you sure you want to logout" />
+            <ThemedDialog setVisible={setLogoutVisible} visible={logoutVisible} result={loggedOut} setresult={setLoggedOut} cancelTitle="Cancel" confirmTitle="Logout" description="Are you sure you want to logout?" />
 
             <ThemedDialog setVisible={setDeleteDataVisible} visible={deleteDataVisible} result={deleteData} setresult={setDeleteData} cancelTitle="Cancel" confirmTitle="Delete" description="Are you sure you want to delete your data?" />
 
