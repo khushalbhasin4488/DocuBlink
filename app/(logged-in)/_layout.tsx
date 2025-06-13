@@ -26,20 +26,20 @@ export default function AuthenticatedLayout() {
             tabBarActiveTintColor: colors.button_colors.primary,
             tabBarInactiveTintColor: colors.text_colors.secondary_text,
             tabBarStyle: {
-              backgroundColor: colors.backgrounds.card_surface,
+              backgroundColor: colors.backgrounds.main_background,
               height: 60,
-              paddingBottom: 8,
-              paddingTop: 8,
               elevation: 0,
-              borderTopWidth: 0,
             },
             tabBarItemStyle: {
+              paddingVertical: 4,
+              borderTopColor: colors.text_colors.tertiary_text,
+              borderTopWidth: 1,
               height: 44,
             },
             tabBarLabelStyle: {
               fontSize: 12,
               marginTop: 4,
-            },
+            }
           }}
         >
           <Tabs.Screen

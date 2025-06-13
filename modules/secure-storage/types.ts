@@ -20,6 +20,7 @@ export type UserDataType = {
     studentInfo: {
         college_name: string ;
         course: string ;
+        branch:string;
         section: string ;
         year: string ;
         gpa : string ;

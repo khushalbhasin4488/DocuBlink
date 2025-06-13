@@ -1,6 +1,8 @@
-import { UserDataType } from "@/modules/secure-storage/types";
+import { SecureStorageKeyType, UserDataType } from "@/modules/secure-storage/types";
 import { create } from "zustand";
 interface UserDataStore extends UserDataType {
+    setUserDataState: (data: UserDataType) => void;
+    setKey: (key: SecureStorageKeyType) => void;
     setName: (name: string) => void;
     setEmail: (email: string) => void;
     setContact: (contact: string) => void;
@@ -11,6 +13,7 @@ interface UserDataStore extends UserDataType {
     setOccupation: (occupation: "STUDENT" | "WORKING_PROFESSIONAL") => void;
     setStudentInfo: (studentInfo: UserDataType["studentInfo"]) => void;   
     setCollegeName: (collegeName: string) => void;
+    setBranch: (branch: string) => void;
     setCourse: (course: string) => void;
     setSection: (branch: string) => void;
     setYear: (year: string) => void;
@@ -45,6 +48,7 @@ export const useUserDataStore = create<UserDataStore>((set) => ({
         course: "",
         section: "",
         year: "",
+        branch:"",
         gpa: "",
         skills: "",
         working_experience: ""
@@ -60,6 +64,7 @@ export const useUserDataStore = create<UserDataStore>((set) => ({
     linkedin_profile: "",
     twitter_profile: "",
     achievements_summary: "",
+    setKey: (key: SecureStorageKeyType) => set((state: UserDataStore) => ({ ...state, key })),
     setName: (name: string) => set((state: UserDataStore) => ({ ...state, name })),
     setEmail: (email: string) => set((state: UserDataStore) => ({ ...state, email })),
     setContact: (contact: string) => set((state:UserDataStore) => ({ ...state, contact })),
@@ -80,6 +85,7 @@ export const useUserDataStore = create<UserDataStore>((set) => ({
     setSection: (section: string) => set((state:UserDataStore) => ({ ...state, studentInfo: { ...state.studentInfo, section} })),
     setYear: (year: string) => set((state:UserDataStore) => ({ ...state, studentInfo: { ...state.studentInfo, year } })),
     setGPA: (gpa: string) => set((state:UserDataStore) => ({ ...state, studentInfo: { ...state.studentInfo, gpa } })),
+    setBranch: (branch: string) => set((state:UserDataStore) => ({ ...state, studentInfo: { ...state.studentInfo, branch } })),
     setWorkingExperience: (workingExperience: string) => set((state:UserDataStore) => ({ ...state, studentInfo: { ...state.studentInfo, working_experience: workingExperience } })),
     setJobTitle: (jobTitle: string) => set((state:UserDataStore) => ({ ...state, WorkingProfessionaInfo: { ...state.WorkingProfessionaInfo, job_title: jobTitle } })),
     setCompanyName: (companyName: string) => set((state:UserDataStore) => ({ ...state, WorkingProfessionaInfo: { ...state.WorkingProfessionaInfo, company_name: companyName } })),
@@ -87,6 +93,9 @@ export const useUserDataStore = create<UserDataStore>((set) => ({
     setSkills: (skills: string) => set((state:UserDataStore) => ({
         studentInfo: { ...state.studentInfo, skills },
         WorkingProfessionaInfo: { ...state.WorkingProfessionaInfo, skills }
+    })),
+    setUserDataState: (data: UserDataType) => set(() => ({
+        ...data
     })),
     reset: () => set(() => ({
         key: "userData",
@@ -105,7 +114,8 @@ export const useUserDataStore = create<UserDataStore>((set) => ({
             year: "",
             gpa: "",
             skills: "",
-            working_experience: ""
+            working_experience: "",
+            branch:""
         },
         WorkingProfessionaInfo: {
             company_name: "",

@@ -1,13 +1,14 @@
 import { secureStoreClient } from "@/modules/secure-storage";
 import { useAiStore } from "@/store/aiSlice";
+import { useUserDataStore } from "@/store/userSlice";
 import { useCallback, useState } from "react";
-import { StorageKeys } from "../types";
+import { GeminiDataType, StorageKeys, UserDataType } from "../types";
 
 export const useLoadStates = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [loadedKeys, setLoadedKeys] = useState<Record<string, any>>({});
     const setGeminiApiKeyState = useAiStore(state => state.setGeminiApiKeyState);
-
+    const setUserDataState = useUserDataStore(state => state.setUserDataState);
     const loadStates = useCallback(async () => {
         /**
          * This function loads states from secure storage.
@@ -17,18 +18,19 @@ export const useLoadStates = () => {
             console.log("Loading states from secure storage...");
             setLoading(true);
             const keys = Object.keys(StorageKeys) as Array<keyof typeof StorageKeys>;
-            const results: Record<string, any> = {};
-            
+            const results: Record<string, any> = {}; 
             for (const key of keys) {
                 const result = await secureStoreClient.handleGetStoreSecure(key);
                 if (result) {
                     console.log(`Loaded ${key}:`, result);
-                    results[key] = result;
-                    
+                    results[key] = result.key;
                     // Update store state based on the loaded value
                     switch (key) {
                         case "geminiApiKey":
-                            setGeminiApiKeyState(result.geminiApiKey);
+                            setGeminiApiKeyState((result as GeminiDataType).geminiApiKey);
+                            break;
+                        case "userData":
+                            setUserDataState((result as UserDataType));
                             break;
                     }
                 } else {

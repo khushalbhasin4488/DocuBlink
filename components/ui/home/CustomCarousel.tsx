@@ -3,8 +3,8 @@ import { useRef } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, {
-    ICarouselInstance,
-    Pagination
+  ICarouselInstance,
+  Pagination
 } from "react-native-reanimated-carousel";
 
 export const CustomCarousel = ({ images }: { images: string[] }) => {
@@ -67,9 +67,9 @@ export const CustomCarousel = ({ images }: { images: string[] }) => {
 const styles = StyleSheet.create({
     rootContainer:{
         display:"flex",
-        flex:1,
         flexDirection:"column",
         padding:10,
+        paddingTop:0,
         alignItems:"center",
         justifyContent:"center",
     }

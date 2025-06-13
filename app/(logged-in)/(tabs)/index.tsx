@@ -1,27 +1,101 @@
-import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedView } from "@/components/ThemedView";
 import { CustomCarousel } from "@/components/ui/home/CustomCarousel";
 import { DataDrawer, DataDrawerRef } from "@/components/ui/home/DataDrawer";
+import { GoogleFormInput } from "@/components/ui/home/GoogleFormInput";
 import { SyncSwitch } from "@/components/ui/home/SyncSwitch";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { useFormStore } from "@/store/formSlice";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useRef, useState } from 'react';
+import { Dimensions, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import WebView from "react-native-webview";
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const MAX_HEIGHT = screenHeight;
+const MAX_WIDTH = screenWidth;
 
 export default function Index() {
-    const [formUrl, setFormUrl] = useState<string>("")
     const colors = useThemeColor()
     const drawerRef = useRef<DataDrawerRef>(null);
+    const { script, webViewKey, setCookies, setFormUrl, showWebView, setShowWebView, formUrl, setScript } = useFormStore()
+    const [currentUrl, setCurrentUrl] = useState<string>("");
 
     const handleAddManually = () => {
         drawerRef.current?.present();
     };
 
+    const onMessage = (event: { nativeEvent: { data: string; }; }) => {
+        const receivedCookies = event.nativeEvent.data;
+        setCookies(receivedCookies);
+        console.log('Cookies received:', receivedCookies);
+    };
+
+    const handleCloseWebView = () => {
+        setShowWebView(false);
+        setFormUrl("")
+    };
+
+    const handleOpenInBrowser = async () => {
+        if (formUrl) {
+            try {
+                await Linking.openURL(formUrl);
+            } catch (err) {
+                console.error('Error opening URL:', err);
+            }
+        }
+    };
+
+    const handleNavigationStateChange = (navState: any) => {
+        setCurrentUrl(navState.url);
+        if(navState.url.includes("https://accounts.google.com/")){
+            setScript("")
+        }
+        else if(navState.url.includes("https://myaccount.google.com/")){
+            setScript(`
+            let timer = setTimeout(() => {    
+                    window.location.href = ${formUrl};
+            }
+            , 1000);
+            window.addEventListener("beforeunload", () => {
+                clearTimeout(timer);
+            });
+            `)
+        }
+        console.log('Current URL:', navState.url);
+    };
+
     return (
         <ThemedView style={styles.rootContainer}>
+            {showWebView && formUrl &&
+                <View style={styles.webViewContainer}>
+                    <View style={styles.webViewButtons}>
+                        <TouchableOpacity 
+                            style={styles.browserButton} 
+                            onPress={handleOpenInBrowser}
+                        >
+                            <Ionicons name="open-outline" size={24} color={colors.text_colors.primary_text} />
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            style={styles.closeButton} 
+                            onPress={handleCloseWebView}
+                        >
+                            <Ionicons name="close-circle" size={32} color={colors.text_colors.primary_text} />
+                        </TouchableOpacity>
+                    </View>
+                    <WebView
+                        style={styles.WebViewStyle}
+                        source={{ uri: formUrl }}
+                        injectedJavaScript={script}
+                        onMessage={onMessage}
+                        onNavigationStateChange={handleNavigationStateChange}
+                        key={webViewKey}
+                        javaScriptEnabled={true}
+                        domStorageEnabled={true}
+                    />
+                </View>
+            }
             <View style={styles.syncView}>
                 <ThemedText type="defaultSemiBold">sync</ThemedText>
                 <SyncSwitch />
@@ -33,32 +107,24 @@ export default function Index() {
                 <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.primary }}>
                     QuickForm
                 </ThemedText>
-
-                <View style={styles.formView}>
-
-                    <ThemedTextInput value={formUrl} setValue={setFormUrl} placeholder={"https://forms.google.com/abc"} style={styles.formInput} />
-                    <ThemedButton type="neutral_default" style={styles.formViewButton}>
-
-                        <Ionicons name="send" size={32} color={colors.button_colors.primary} />
-                    </ThemedButton>
-                </View>
+                <GoogleFormInput />
                 <ThemedText type="default" style={styles.formViewDescription} >
                     ⓘ save your information to fill in google forms automatically .
                 </ThemedText>
             </ThemedView>
-     
-           <CustomCarousel images={["https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg", "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg"]} />
-           
+
+                <CustomCarousel images={["https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg", "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg"]} />
+
             <ThemedView style={styles.uploadingContainer}>
-                <ThemedView style={{ ...styles.uploadCard, width:"50%",backgroundColor: colors.button_colors.primary }} onTouchEnd={()=>{}}>
+                <ThemedView style={{ ...styles.uploadCard, width: "50%", backgroundColor: colors.button_colors.primary }} onTouchEnd={() => { }}>
                     <Ionicons name="document-text" size={50} color={colors.button_colors.neutral_default} />
                     <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
-                        Upload
+                        Add by uploading
                     </ThemedText>
                 </ThemedView>
                 <DataDrawer ref={drawerRef}>
-                    <ThemedView 
-                        style={[{ backgroundColor: colors.button_colors.primary }, styles.uploadCard]} 
+                    <ThemedView
+                        style={[{ backgroundColor: colors.button_colors.primary }, styles.uploadCard]}
                         onTouchEnd={handleAddManually}
                     >
                         <MaterialIcons name="edit-document" size={50} color={colors.button_colors.neutral_default} />
@@ -70,17 +136,16 @@ export default function Index() {
             </ThemedView>
             <ThemedView style={styles.bottomContainer}>
 
-            <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.primary}} onPress={()=>{router.push("/(logged-in)/(tabs)/profile")}}>
-                Update your details
-            </ThemedText>
-                <Ionicons name="arrow-forward"  size={18} color={colors.button_colors.primary} onPress={()=>{router.push("/(logged-in)/(tabs)/profile")}} />
-        </ThemedView>
+                <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.primary }} onPress={() => { router.push("/(logged-in)/(tabs)/profile") }}>
+                    Update your details
+                </ThemedText>
+                <Ionicons name="arrow-forward" size={18} color={colors.button_colors.primary} onPress={() => { router.push("/(logged-in)/(tabs)/profile") }} />
+            </ThemedView>
         </ThemedView>
     )
 }
 const styles = StyleSheet.create({
     formInput: {
-        marginVertical: 20,
         height: 43,
     },
     formViewDescription: {
@@ -91,8 +156,8 @@ const styles = StyleSheet.create({
     },
     formViewContainer: {
         height: "20%",
-        paddingVertical:15,
-        margin:0,
+        paddingVertical: 15,
+        margin: 0,
         display: "flex",
         flexDirection: "column",
         gap: 5,
@@ -116,6 +181,9 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         gap: 10,
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
 
     },
     uploadCard: {
@@ -128,7 +196,6 @@ const styles = StyleSheet.create({
         gap: 5,
         padding: 10,
     },
-
     rootContainer: {
         flex: 1,
         display: "flex",
@@ -148,11 +215,44 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    bottomContainer:{
-        display:"flex",
-        flexDirection:"row",
+    bottomContainer: {
+        display: "flex",
+        flexDirection: "row",
         marginTop: 20,
-        alignItems:"center",
+        alignItems: "center",
 
-    }
+    },
+    webViewContainer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+        backgroundColor: 'white',
+    },
+    WebViewStyle: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'transparent',
+    },
+    webViewButtons: {
+        position: 'absolute',
+        top: 40,
+        right: 20,
+        zIndex: 10000,
+        flexDirection: 'row',
+        gap: 10,
+    },
+    closeButton: {
+        padding: 8,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderRadius: 20,
+    },
+    browserButton: {
+        padding: 8,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderRadius: 20,
+    },
 })

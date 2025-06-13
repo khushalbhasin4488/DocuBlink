@@ -1,9 +1,11 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { Toasts } from "@backpackapp-io/react-native-toast";
 import { PortalProvider } from '@gorhom/portal';
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { Stack } from "expo-router";
-import { useEffect, useState } from "react";
+
+import { Stack, useRouter } from "expo-router";
+import React, { useState } from 'react';
 import { SafeAreaView } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -16,40 +18,26 @@ GoogleSignin.configure({
 })
 
 export default function RootLayout() {
-  const [initialRoute, setInitialRoute] = useState<string>("(logged-in)");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const router = useRouter();
   let colorScheme = useColorScheme();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const currentUser =  GoogleSignin.getCurrentUser();
-        
-        setInitialRoute(currentUser?.idToken ? "(logged-in)" : "index");
-      } catch (error) {
-        console.error("Error checking auth state:", error);
-        setInitialRoute("index");
-      }
-    };
-    checkAuth();
-  }, []);
 
-  if (!initialRoute) {
-    return null; // Or a loading screen
-  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-        <PortalProvider>
-      <SafeAreaView style={{flex:1}}>
+      <PortalProvider>
+        <SafeAreaView style={{flex:1}}>
           <ThemeProvider value={colorScheme=="dark" ? DarkTheme : DefaultTheme}>
-            <Stack initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="test/TestPage" />
-              <Stack.Screen name="(logged-in)" />
+            <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(logged-in)" />
+                  <Stack.Screen name="test/TestPage" />
             </Stack>
           </ThemeProvider>
-      </SafeAreaView>
-        </PortalProvider>
+        </SafeAreaView>
+        <Toasts/>
+      </PortalProvider>
     </GestureHandlerRootView>
   );
 }

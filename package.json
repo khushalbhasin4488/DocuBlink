@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.18",
+    "@backpackapp-io/react-native-toast": "^0.14.0",
     "@expo/ui": "~0.1.1-alpha.7",
     "@expo/vector-icons": "^14.1.0",
     "@gorhom/bottom-sheet": "^5.1.5",

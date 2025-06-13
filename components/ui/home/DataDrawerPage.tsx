@@ -1,16 +1,18 @@
-import { SizeBox } from "@/components/SizeBox"
-import { ThemedText } from "@/components/ThemedText"
-import { ThemedTextInput } from "@/components/ThemedTextInput"
-import { ThemedView } from '@/components/ThemedView'
-import { useThemeColor } from "@/hooks/useThemeColor"
-import { useUserDataStore } from "@/store/userData"
-import { Ionicons } from "@expo/vector-icons"
-import React from 'react'
-import { StyleSheet } from "react-native"
-import SelectDropdown from 'react-native-select-dropdown'
-
+import { SizeBox } from "@/components/SizeBox";
+import { ThemedButton } from "@/components/ThemedButton";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedTextInput } from "@/components/ThemedTextInput";
+import { ThemedView } from '@/components/ThemedView';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { secureStoreClient } from "@/modules/secure-storage/index";
+import { useUserDataStore } from "@/store/userSlice";
+import { toast } from '@backpackapp-io/react-native-toast';
+import { Ionicons } from "@expo/vector-icons";
+import React from 'react';
+import { StyleSheet } from "react-native";
+import SelectDropdown from 'react-native-select-dropdown';
 export const DataDrawerPage = () => {
-
+    const [loading, setloading] = React.useState<boolean>(false)
     const {
         WorkingProfessionaInfo,
         contact,
@@ -22,6 +24,14 @@ export const DataDrawerPage = () => {
         voter_id,
         occupation,
         studentInfo,
+        resume_link,
+        github_profile,
+        linkedin_profile,
+        twitter_profile,
+        achievements_summary,
+        setKey,
+        setStudentInfo,
+        setWorkingProfessionalInfo,
         setContact,
         setEmail,
         setName,
@@ -35,6 +45,7 @@ export const DataDrawerPage = () => {
         setYearsOfExperience,
         setSkills,
         setCollegeName,
+        setBranch,
         setSection,
         setCourse,
         setGPA,
@@ -45,7 +56,38 @@ export const DataDrawerPage = () => {
         setTwitterProfile,
         setResumeLink
     } = useUserDataStore()
+    const userData = useUserDataStore((state) => state)
     const colors = useThemeColor()
+    const handleOnSave = async () => {
+        setloading(true)
+        await secureStoreClient.handleSetStoreSecure(userData)
+        setTimeout(() => {
+            
+            setloading(false)
+           toast("Data saved successfully!", {
+                styles: {
+                    indicator: {
+                        backgroundColor: colors.button_colors.primary,
+                    }, 
+                    view: {
+                        backgroundColor: colors.main_accent.accent,
+                        borderWidth:1,
+                        borderColor: colors.button_colors.primary,
+                        borderRadius:16
+                    },
+                    text: {
+                        color: colors.text_colors.primary_text,
+                        fontWeight:"bold"
+                    },
+                    pressable: {
+                        backgroundColor: colors.button_colors.primary,
+                        borderRadius: 20,
+                    }
+                },
+                duration: 2000,
+            }); 
+        }, 300);
+    }
     return (
         <ThemedView style={[styles.rootContainer, { backgroundColor: colors.backgrounds.main_background }]}>
             <ThemedText type="subtitle" style={[styles.Label, {
@@ -54,6 +96,9 @@ export const DataDrawerPage = () => {
             }]}>
                 Personal Information
             </ThemedText>
+                <ThemedText type="link" style={styles.formViewDescription} >
+                    ⓘ Every field is optional.
+                </ThemedText>
             <ThemedText type="defaultSemiBold" style={styles.Label}>
                 Name
             </ThemedText>
@@ -110,6 +155,28 @@ export const DataDrawerPage = () => {
                     );
                 }}
             />
+
+                        <ThemedText type="subtitle" style={[styles.Label, {
+                            color: colors.text_colors.tertiary_text, marginBottom: 6
+                        }]}>
+                           Links & Profiles 
+                        </ThemedText>
+            <ThemedText type="defaultSemiBold" style={styles.Label}>
+                Resume Link
+            </ThemedText>
+            <ThemedTextInput value={resume_link} setValue={setResumeLink} placeholder="https://drive.google.com/resume.pdf" style={styles.formInput} />
+            <ThemedText type="defaultSemiBold" style={styles.Label}>
+                Github Profile
+            </ThemedText>
+            <ThemedTextInput value={github_profile} setValue={setGithubProfile} placeholder="https://github.com/abc" style={styles.formInput} />
+            <ThemedText type="defaultSemiBold" style={styles.Label}>
+                LinkedIn Profile
+            </ThemedText>
+            <ThemedTextInput value={linkedin_profile} setValue={setLinkedinProfile} placeholder="https://linkedin.com/in/abc" style={styles.formInput} />
+            <ThemedText type="defaultSemiBold" style={styles.Label}>
+                Twitter Profile
+            </ThemedText>
+            <ThemedTextInput value={twitter_profile} setValue={setTwitterProfile} placeholder="https://twitter.com/abc" style={styles.formInput} />
             {(occupation == "WORKING_PROFESSIONAL") && (
                 <>
                     <ThemedView>
@@ -159,7 +226,9 @@ export const DataDrawerPage = () => {
                         <ThemedText type="defaultSemiBold" style={styles.Label}>
                             Course
                         </ThemedText>
-                        <ThemedTextInput value={studentInfo.course} setValue={setCourse} placeholder="Information Technology" style={styles.formInput} />
+                        <ThemedTextInput value={studentInfo.course} setValue={setCourse} placeholder="Bachelor of Technology" style={styles.formInput} />
+                        <ThemedText type="defaultSemiBold" style={styles.Label}>Branch</ThemedText>
+                        <ThemedTextInput value={studentInfo.branch} setValue={setBranch} placeholder="Information Technology" style={styles.formInput} />
                         <ThemedText type="defaultSemiBold" style={styles.Label}>
                             Section
                         </ThemedText>
@@ -186,6 +255,23 @@ export const DataDrawerPage = () => {
 
                 </>
             )}
+            <ThemedText type="defaultSemiBold" style={styles.Label}>
+                Achievements Summary
+            </ThemedText>
+            <ThemedTextInput    
+                multiline
+                value={achievements_summary} setValue={setAchievementsSummary} placeholder="Achievements, certifications, awards, etc." style={[styles.formInput, { height: 90 }]} />
+                <ThemedButton 
+                    type={loading ? "info": "primary"}
+                    disabled={loading}
+
+                    onPress={handleOnSave}
+                    style={{ marginTop: 20, width: "100%" }}
+                >
+                    <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
+                        {loading ? "Saving..." : "Save"}
+                    </ThemedText>
+                </ThemedButton>
         </ThemedView>
     )
 }
@@ -241,5 +327,11 @@ const styles = StyleSheet.create({
     dropdownItemIconStyle: {
         fontSize: 28,
         marginRight: 8,
+    },
+    formViewDescription: {
+        lineHeight: 18,
+        textDecorationLine: "none",
+        letterSpacing: 0,
+        fontSize: 13,
     },
 })

@@ -7,6 +7,7 @@ import { DetailsGrid } from "@/components/ui/profile/DetailsGrid";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { handleGoogleLogout } from "@/modules/firebase/utils/auth";
 import { useDeleteStorage } from "@/modules/secure-storage/hooks/useDeleteStorage";
+import { useFormStore } from "@/store/formSlice";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { StackActions } from '@react-navigation/native';
 import { useNavigation } from "expo-router";
@@ -18,18 +19,29 @@ export default function ProfileScreen() {
     const user = GoogleSignin.getCurrentUser()
     const [deleteDataVisible, setDeleteDataVisible] = useState(false)
     const [logoutVisible, setLogoutVisible] = useState(false)
-    const [showEditGrid, setShowEditGrid] = useState(false)
+    // const [showEditGrid, setShowEditGrid] = useState(false)
     const [loggedOut, setLoggedOut] = useState(false)
     const [deleteData, setDeleteData] = useState(false)
+    const { reset: resetFormStore,webViewKey,setWebViewKey, setScript } = useFormStore()
 
     const navigation = useNavigation()
     const {deleteStorage} = useDeleteStorage()
     const handleLogoutConfirmed = async () => {
         try {
-
             await handleGoogleLogout()
             setLoggedOut(false)
             await deleteStorage()
+            resetFormStore()
+            setScript(`
+            let timer = setTimeout(() => {    
+                    window.location.href = "https://accounts.google.com/Logout";
+            }
+            , 1000);
+            window.addEventListener("beforeunload", () => {
+                clearTimeout(timer);
+            });
+                    `)
+            setWebViewKey(webViewKey+1)
             navigation.dispatch(
                 StackActions.replace("index")
             )
@@ -71,15 +83,18 @@ export default function ProfileScreen() {
 
 
             <ThemedView style={styles.listContainer}>
-                <ThemedButton type="neutral_default" style={[{
+               
+                {false && <ThemedButton type="neutral_default" style={[{
                     borderColor: colors.button_colors.primary,
                 }, styles.listView]}
-                    onPress={() => { setShowEditGrid(true) }}>
+                    // onPress={() => { setShowEditGrid(true) }}>
+                    onPress={() => {}}>
                     <ThemedText type="defaultSemiBold">
                         Edit Details
                     </ThemedText>
-                </ThemedButton>
-                {showEditGrid && <DetailsGrid />}
+                </ThemedButton>}
+                {false && <DetailsGrid />}
+
                 <ThemedButton type="neutral_default" style={[{
                     borderColor: colors.button_colors.primary,
                 }, styles.listView]} onPress={() => { setDeleteDataVisible(true) }}>
