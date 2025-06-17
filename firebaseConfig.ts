@@ -19,7 +19,6 @@ const firebaseConfig = {
 // Initialize Firebase
 export const FIREBASE_APP = initializeApp(firebaseConfig);
 export const FIREBASE_DB = getFirestore(FIREBASE_APP);
-
 // Enable offline persistence
 enableIndexedDbPersistence(FIREBASE_DB)
   .catch((err) => {

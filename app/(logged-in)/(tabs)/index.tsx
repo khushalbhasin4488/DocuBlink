@@ -4,11 +4,16 @@ import { CustomCarousel } from "@/components/ui/home/CustomCarousel";
 import { DataDrawer, DataDrawerRef } from "@/components/ui/home/DataDrawer";
 import { GoogleFormInput } from "@/components/ui/home/GoogleFormInput";
 import { SyncSwitch } from "@/components/ui/home/SyncSwitch";
+import { usePrompt } from "@/hooks/usePrompt";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { getGeminiCompletions } from "@/services/geminiClient";
+import { getFormhtml } from "@/services/getFormhtml";
 import { useFormStore } from "@/store/formSlice";
+import { useUserDataStore } from "@/store/userSlice";
+import { PopulatePromptWithUserInfo } from "@/utils/populatePromptWithUserInfo";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import WebView from "react-native-webview";
 
@@ -19,22 +24,28 @@ const MAX_WIDTH = screenWidth;
 export default function Index() {
     const colors = useThemeColor()
     const drawerRef = useRef<DataDrawerRef>(null);
-    const { script, webViewKey, setCookies, setFormUrl, showWebView, setShowWebView, formUrl, setScript } = useFormStore()
+    const {setformhtml,  formhtml, cookies, script, webViewKey,setWebViewKey, setCookies, setFormUrl, showWebView, setShowWebView, formUrl, setScript } = useFormStore()
+    const { getObjectKeys , getUserInfo} = useUserDataStore();
     const [currentUrl, setCurrentUrl] = useState<string>("");
-
     const handleAddManually = () => {
         drawerRef.current?.present();
     };
 
     const onMessage = (event: { nativeEvent: { data: string; }; }) => {
         const receivedCookies = event.nativeEvent.data;
-        setCookies(receivedCookies);
-        console.log('Cookies received:', receivedCookies);
+        console.log('Received message from WebView:', receivedCookies);
+        if (receivedCookies) {
+            setCookies(receivedCookies);
+            console.log('Cookies set successfully');
+        } else {
+            console.log('Received empty cookies from WebView');
+        }
     };
 
     const handleCloseWebView = () => {
         setShowWebView(false);
         setFormUrl("")
+        setformhtml(null)
     };
 
     const handleOpenInBrowser = async () => {
@@ -48,11 +59,14 @@ export default function Index() {
     };
 
     const handleNavigationStateChange = (navState: any) => {
+        console.log('Navigation state changed:', navState.url);
         setCurrentUrl(navState.url);
         if(navState.url.includes("https://accounts.google.com/")){
-            setScript("")
+            console.log('Detected Google sign-in page, clearing script');
+            setScript("");
         }
         else if(navState.url.includes("https://myaccount.google.com/")){
+            console.log('Detected Google account page, setting redirect script');
             setScript(`
             let timer = setTimeout(() => {    
                     window.location.href = ${formUrl};
@@ -61,11 +75,51 @@ export default function Index() {
             window.addEventListener("beforeunload", () => {
                 clearTimeout(timer);
             });
-            `)
+            `);
         }
-        console.log('Current URL:', navState.url);
     };
+    const handleFetchFormHTML = async () => {
+        console.log("fetching form html")
+        if(formhtml || !formUrl || !cookies){
+            return
+        }
+        let data = await getFormhtml(formUrl, cookies)
+        if(!data){
+            console.error("Failed to fetch form HTML")  
+        }
+        setformhtml(data)
 
+        const availableFields = getObjectKeys().filter(key => 
+            !key.startsWith('set') && 
+            !key.startsWith('get') && 
+            key !== 'reset' && 
+            key !== 'key'
+        );
+        console.log(availableFields)
+        let prompt = usePrompt("generateEmbeddingJS", {
+            formhtml: data,
+            UserObjectKeys: JSON.stringify(availableFields),
+        })
+        let script = await getGeminiCompletions(prompt)
+        if(!script){
+               console.error("Failed to generate script from Gemini completions")
+            return
+        }
+        let populated_script = PopulatePromptWithUserInfo(script,getUserInfo() )
+        console.log("response", populated_script)
+        setScript(populated_script)
+    }
+
+    useEffect(()=>{
+        if(cookies){
+            handleFetchFormHTML()
+        }
+},[cookies])
+    useEffect(()=>{
+        if(script){
+            setWebViewKey(webViewKey+1)
+        }
+    },[script])
     return (
         <ThemedView style={styles.rootContainer}>
             {showWebView && formUrl &&
@@ -90,9 +144,25 @@ export default function Index() {
                         injectedJavaScript={script}
                         onMessage={onMessage}
                         onNavigationStateChange={handleNavigationStateChange}
+                        onError={(syntheticEvent) => {
+                            const { nativeEvent } = syntheticEvent;
+                            console.warn('WebView error:', nativeEvent);
+                        }}
+                        onHttpError={(syntheticEvent) => {
+                            const { nativeEvent } = syntheticEvent;
+                            console.warn('WebView HTTP error:', nativeEvent);
+                        }}
+                        onLoadEnd={() => {
+                            console.log('WebView load ended');
+                        }}
+                        onLoadStart={() => {
+                            console.log('WebView load started');
+                        }}
                         key={webViewKey}
                         javaScriptEnabled={true}
                         domStorageEnabled={true}
+                        sharedCookiesEnabled={true}
+                        thirdPartyCookiesEnabled={true}
                     />
                 </View>
             }

@@ -2,52 +2,57 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
-export const Colors =
-//  {
-  // light: {
-  //   text: '#181A1B', // rgb(24,26,27)
-  //   // background: '#EFD3B2',//rgb(223, 213, 202)
-  //   background:"#FAF3E7",
-  //   tint: tintColorLight,
-  //   icon: '#687076',
-  //   primary: '#8E7144', // rgb(142, 113, 68)
-  //   secondary: '#A68A56', // rgb(166, 138, 86)
-  //   tabIconDefault: '#687076',
-  //   tabIconSelected: tintColorLight,
-  // },
-  // dark: {
-  //   text: '#ECEDEE', // rgb(236, 237, 238)
-  //   // background: '#151718',
-  //   background:"#e1d6c1",
-  //   tint: tintColorDark,
-  //   primary: '#8E7144', // rgb(142, 113, 68)
-  //   secondary: '#A68A56', // rgb(166, 138, 86)
-  //   icon: '#9BA1A6',
-  //   tabIconDefault: '#9BA1A6',
-  //   tabIconSelected: tintColorDark,
-  // },
+// export const Colors =
+//   {
+//     "backgrounds": {
+//         "main_background":"#06283D",
+//         // "main_background":"#21242A",
+//         // "main_background": "#FAF3E7",
+//         // "main_background": "#E0E8CC",
+//         "card_surface": "#FFFDF8"
+//     },
+//     "text_colors": {
+//         // "primary_text": "#4B3B2A",
+//         // "primary_text":"5C899D",
+//         "primary_text":"#DFF6FF",
+//         "secondary_text": "#7D6A55",
+//         "tertiary_text": "#A68A56",
+//         "disabled_text": "#B7A99A"
+//     },
+//     "button_colors": {
+//         "primary": "#A47551",
+//         "success": "#7EAA92",
+//         "danger": "#C97A63",
+//         "warning": "#E2B07A",
+//         "info": "#B7A99A",
+//         "neutral_default": "#E9DCC9"
+//     },
+//     "main_accent": {
+//         "accent": "#DAB49D"
+//     }
 // }
-  {
+
+export const Colors = {
     "backgrounds": {
-        "main_background": "#FAF3E7",
-        "card_surface": "#FFFDF8"
+        "main_background": "#D3C6DC",
+        "card_surface": "#F7F5F9"
     },
     "text_colors": {
-        "primary_text": "#4B3B2A",
-        "secondary_text": "#7D6A55",
-        "tertiary_text": "#A68A56",
-        "disabled_text": "#B7A99A"
+        "primary_text": "#533E65",
+        "secondary_text": "#7A6C89",
+        "tertiary_text": "grey",
+        "disabled_text": "#B9B1BF"
     },
     "button_colors": {
-        "primary": "#A47551",
-        "success": "#7EAA92",
-        "danger": "#C97A63",
-        "warning": "#E2B07A",
-        "info": "#B7A99A",
-        "neutral_default": "#E9DCC9"
+        "primary": "#5F4180",
+        "success": "#34C759",
+        "danger": "#E54B4B",
+        "warning": "#F7B801",
+        "info": "#3A86FF",
+        "neutral_default": "#e3d7ff"
     },
     "main_accent": {
-        "accent": "#DAB49D"
+        "accent": "#00A99D"
     }
 }
 

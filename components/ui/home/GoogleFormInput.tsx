@@ -1,16 +1,18 @@
 import { ThemedButton } from "@/components/ThemedButton"
 import { ThemedTextInput } from "@/components/ThemedTextInput"
+import { scripts } from "@/constants/scripts"
 import { useThemeColor } from "@/hooks/useThemeColor"
 import { useFormStore } from "@/store/formSlice"
 import { toast } from "@backpackapp-io/react-native-toast"
 import { Ionicons } from "@expo/vector-icons"
 import { StyleSheet, View } from "react-native"
+
 export const GoogleFormInput = () => {
     const colors = useThemeColor()
-    const { formUrl, setFormUrl, setLoading,setScript,  setShowWebView } = useFormStore()
+    const { formUrl, setFormUrl, setLoading, setScript, setShowWebView } = useFormStore()
+    
     const handleOnSubmitForm = async () => {
         if (!formUrl) {
-
             toast("Enter a valid google forms url", {
                 styles: {
                     indicator: {
@@ -36,25 +38,32 @@ export const GoogleFormInput = () => {
             return
         }
         setLoading(true);
+        // Set the cookie collection script before showing WebView
+        setScript(scripts["get-cookies"]);
         setShowWebView(true);
         setLoading(false);
     }
+
     return (
-
         <View style={styles.formView}>
-
-            <ThemedTextInput value={formUrl} setValue={setFormUrl} placeholder={"https://forms.google.com/abc"} style={styles.formInput} />
-            <ThemedButton type="neutral_default" style={styles.formViewButton} onPress={handleOnSubmitForm}>
-
+            <ThemedTextInput 
+                value={formUrl} 
+                setValue={setFormUrl} 
+                placeholder={"https://forms.google.com/abc"} 
+                style={styles.formInput} 
+            />
+            <ThemedButton 
+                type="neutral_default" 
+                style={styles.formViewButton} 
+                onPress={handleOnSubmitForm}
+            >
                 <Ionicons name="send" size={32} color={colors.button_colors.primary} />
             </ThemedButton>
         </View>
     )
-
 }
+
 const styles = StyleSheet.create({
-
-
     formInput: {
         height: 43,
     },
@@ -67,7 +76,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 10,
-
     },
     formViewButton: {
         padding: 5

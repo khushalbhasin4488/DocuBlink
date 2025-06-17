@@ -22,7 +22,7 @@ export default function ProfileScreen() {
     // const [showEditGrid, setShowEditGrid] = useState(false)
     const [loggedOut, setLoggedOut] = useState(false)
     const [deleteData, setDeleteData] = useState(false)
-    const { reset: resetFormStore,webViewKey,setWebViewKey, setScript } = useFormStore()
+    const { reset: resetFormStore,webViewKey,setWebViewKey, setScript , setShowWebView} = useFormStore()
 
     const navigation = useNavigation()
     const {deleteStorage} = useDeleteStorage()
@@ -32,6 +32,8 @@ export default function ProfileScreen() {
             setLoggedOut(false)
             await deleteStorage()
             resetFormStore()
+            setShowWebView(false)
+            
             setScript(`
             let timer = setTimeout(() => {    
                     window.location.href = "https://accounts.google.com/Logout";
@@ -41,6 +43,14 @@ export default function ProfileScreen() {
                 clearTimeout(timer);
             });
                     `)
+            // setScript(`
+            //         document.cookie.split(";").forEach((c) => {
+            //             document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            //         });
+            //         localStorage.clear();
+            //         sessionStorage.clear();
+            //         window.location.href = "https://accounts.google.com/Logout";
+            //     `)
             setWebViewKey(webViewKey+1)
             navigation.dispatch(
                 StackActions.replace("index")

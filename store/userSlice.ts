@@ -1,7 +1,9 @@
 import { SecureStorageKeyType, UserDataType } from "@/modules/secure-storage/types";
 import { create } from "zustand";
 interface UserDataStore extends UserDataType {
+    getUserInfo: () => UserDataType;
     setUserDataState: (data: UserDataType) => void;
+    getObjectKeys: () => string[];
     setKey: (key: SecureStorageKeyType) => void;
     setName: (name: string) => void;
     setEmail: (email: string) => void;
@@ -33,7 +35,7 @@ interface UserDataStore extends UserDataType {
 
 }
 
-export const useUserDataStore = create<UserDataStore>((set) => ({
+export const useUserDataStore = create<UserDataStore>((set, get) => ({
     key: "userData",
     name: "",
     email: "",
@@ -128,5 +130,54 @@ export const useUserDataStore = create<UserDataStore>((set) => ({
         linkedin_profile: "",
         twitter_profile: "",
         achievements_summary: ""
-    }))
+    })),
+    getObjectKeys: () => {
+        let userObjectKeys : string[] = []
+        
+        for (let key of Object.keys(get())) {
+            if(key.substring(0, 3)!="set" && key.substring(0, 3)!="get" && key !== "reset" && key!="key" && key!="studentInfo" && key!="WorkingProfessionaInfo" ) {
+                userObjectKeys.push(key);
+            }
+            if(key=="studentInfo" || key=="WorkingProfessionaInfo") {
+                userObjectKeys.push(...Object.keys(get()[key as keyof UserDataStore]));
+            }
+        }
+        return userObjectKeys;
+
+},
+getUserInfo: () => {
+    const userInfo: UserDataType = {
+        key: get().key,
+        name: get().name,
+        email: get().email,
+        contact: get().contact,
+        adhar_number: get().adhar_number,
+        pan_number: get().pan_number,
+        passport_number: get().passport_number,
+        voter_id: get().voter_id,
+        occupation: get().occupation,
+        studentInfo: {
+            college_name: get().studentInfo.college_name,
+            course: get().studentInfo.course,
+            section: get().studentInfo.section,
+            year: get().studentInfo.year,
+            gpa: get().studentInfo.gpa,
+            skills: get().studentInfo.skills,
+            working_experience: get().studentInfo.working_experience,
+            branch:get().studentInfo.branch
+        },
+        WorkingProfessionaInfo: {
+            company_name: get().WorkingProfessionaInfo.company_name,
+            job_title: get().WorkingProfessionaInfo.job_title,
+            years_of_experience: get().WorkingProfessionaInfo.years_of_experience,
+            skills: get().WorkingProfessionaInfo.skills
+        },
+        resume_link: get().resume_link,
+        github_profile: get().github_profile,
+        linkedin_profile: get().linkedin_profile,
+        twitter_profile: get().twitter_profile,
+        achievements_summary: get().achievements_summary
+    };
+    return userInfo;
+}
 }));

@@ -20,13 +20,11 @@ export const getGeminiCompletions = async (prompt: string) => {
         }),
     })
     let data = await res.json()
-    console.log("data", data)
     if(res.ok){ 
 
-        let response =  data["candidates"][0]["content"]["parts"][0]["text"]
-        console.log("response", response)
-        return response.substring(13, response.length -16)
-        
+        let response : string=  data["candidates"][0]["content"]["parts"][0]["text"]
+        response =  response.trim().split("```javascript")[1].trim().split("```")[0].trim()
+        return response
     }
     else{
         console.log("error", data)

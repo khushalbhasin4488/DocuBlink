@@ -1,10 +1,30 @@
 export const scripts = {
-    "get-cookies":`
-    let timeout =setTimeout(() => {
-      window.ReactNativeWebView.postMessage(document.cookie);
-    }, 2000);  // Give some time for the page to load cookies
-    true;
-  `,
+    "get-cookies": `
+    (function() {
+        function sendCookies() {
+            const cookies = document.cookie;
+            console.log('Sending cookies:', cookies);
+            window.ReactNativeWebView.postMessage(cookies);
+        }
+
+        // Try immediately
+        sendCookies();
+
+        // Also try after a delay to ensure page is loaded
+        setTimeout(sendCookies, 2000);
+
+        // And try when the page is fully loaded
+        if (document.readyState === 'complete') {
+            sendCookies();
+        } else {
+            window.addEventListener('load', sendCookies);
+        }
+
+        // Log when script is injected
+        console.log('Cookie collection script injected');
+        true;
+    })();
+    `,
   "fill-form":`setTimeout(() => {
     const inputs = document.querySelectorAll('input[type="text"], textarea');
     inputs.forEach(input => {

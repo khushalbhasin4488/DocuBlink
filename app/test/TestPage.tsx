@@ -47,6 +47,10 @@ export default function TestPage() {
       formhtml: data,
     })
     let script = await getGeminiCompletions(prompt)
+    if( !script) {
+      Alert.alert("Error", "Failed to generate script. Please try again.");
+      return;
+    }
     console.log("response", script)
     setScript(script)
   }
