@@ -1,4 +1,5 @@
 import { ThemedView } from "@/components/ThemedView";
+import { localAssets } from "@/constants/localAssets";
 import { useRef } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -6,6 +7,8 @@ import Carousel, {
   ICarouselInstance,
   Pagination
 } from "react-native-reanimated-carousel";
+
+
 
 export const CustomCarousel = ({ images }: { images: string[] }) => {
     const ref = useRef<ICarouselInstance>(null);
@@ -45,7 +48,7 @@ export const CustomCarousel = ({ images }: { images: string[] }) => {
             }}
           >
            <Image
-           source={{ uri: item }}
+           source={item.startsWith('http') || item.startsWith('https') ? { uri: item } : localAssets[item]}
            style={{ height: '100%', width: "100%"}}
            />
           </View>

@@ -5,7 +5,6 @@ import { ThemedView } from "@/components/ThemedView"
 import { useThemeColor } from "@/hooks/useThemeColor"
 import { useState } from "react"
 import { StyleSheet } from "react-native"
-import { TemplateCard } from "./TemplateCard"
 
 export const GeneralScreen = () => {
     const [searchQuery, setSearchQuery] = useState<string>("")
@@ -36,7 +35,12 @@ export const GeneralScreen = () => {
                 color: color.button_colors.primary,
             }} >Templates</ThemedText>
 
-            <ThemedView style={styles.gridContainer}>
+                <ThemedView style={styles.commingSoonCotainer}>
+                    <ThemedText type="defaultSemiBold"  >
+                        Comming Soon
+                    </ThemedText>
+                </ThemedView>
+            {/* <ThemedView style={styles.gridContainer}>
                 {data.map((item => (
                     <TemplateCard
                         image={item.image}
@@ -46,7 +50,7 @@ export const GeneralScreen = () => {
                         onPress={() => console.log(item.title)}
                     />
                 )))}
-            </ThemedView>
+            </ThemedView> */}
         </ThemedView>
     )
 }
@@ -66,5 +70,13 @@ const styles = StyleSheet.create({
         gap: 16,
         marginTop: 12,
         width: '100%',
+    },
+    commingSoonCotainer:{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        width: "100%"
     }
 });

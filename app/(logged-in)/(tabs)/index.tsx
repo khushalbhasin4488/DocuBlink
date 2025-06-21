@@ -8,9 +8,11 @@ import { usePrompt } from "@/hooks/usePrompt";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { getGeminiCompletions } from "@/services/geminiClient";
 import { getFormhtml } from "@/services/getFormhtml";
+import { useAiStore } from "@/store/aiSlice";
 import { useFormStore } from "@/store/formSlice";
 import { useUserDataStore } from "@/store/userSlice";
 import { PopulatePromptWithUserInfo } from "@/utils/populatePromptWithUserInfo";
+import { toast } from '@backpackapp-io/react-native-toast';
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from 'react';
@@ -22,6 +24,7 @@ const MAX_HEIGHT = screenHeight;
 const MAX_WIDTH = screenWidth;
 
 export default function Index() {
+    const{ geminiApiKeyState} = useAiStore()
     const colors = useThemeColor()
     const drawerRef = useRef<DataDrawerRef>(null);
     const {setformhtml,  formhtml, cookies, script, webViewKey,setWebViewKey, setCookies, setFormUrl, showWebView, setShowWebView, formUrl, setScript } = useFormStore()
@@ -30,6 +33,32 @@ export default function Index() {
     const handleAddManually = () => {
         drawerRef.current?.present();
     };
+
+    const handleShowSoon = () => {
+        
+           toast("Comming Soon!", {
+                styles: {
+                    indicator: {
+                        backgroundColor: colors.button_colors.primary,
+                    }, 
+                    view: {
+                        backgroundColor: colors.button_colors.neutral_default,
+                        borderWidth:1,
+                        borderColor: colors.button_colors.primary,
+                        borderRadius:16
+                    },
+                    text: {
+                        color: colors.text_colors.primary_text,
+                        fontWeight:"bold"
+                    },
+                    pressable: {
+                        backgroundColor: colors.button_colors.primary,
+                        borderRadius: 20,
+                    }
+                },
+                duration: 2000,
+            }); 
+        }
 
     const onMessage = (event: { nativeEvent: { data: string; }; }) => {
         const receivedCookies = event.nativeEvent.data;
@@ -100,7 +129,36 @@ export default function Index() {
             formhtml: data,
             UserObjectKeys: JSON.stringify(availableFields),
         })
-        let script = await getGeminiCompletions(prompt)
+        if(!geminiApiKeyState){
+            {
+        
+                toast("Reset Gemini Api Key !", {
+                     styles: {
+                         indicator: {
+                             backgroundColor: colors.button_colors.primary,
+                         }, 
+                         view: {
+                             backgroundColor: colors.button_colors.neutral_default,
+                             borderWidth:1,
+                             borderColor: colors.button_colors.primary,
+                             borderRadius:16
+                         },
+                         text: {
+                             color: colors.text_colors.primary_text,
+                             fontWeight:"bold"
+                         },
+                         pressable: {
+                             backgroundColor: colors.button_colors.primary,
+                             borderRadius: 20,
+                         }
+                     },
+                     duration: 2000,
+                 }); 
+             }
+             return
+        }
+    
+        let script = await getGeminiCompletions(prompt, geminiApiKeyState)
         if(!script){
                console.error("Failed to generate script from Gemini completions")
             return
@@ -183,12 +241,12 @@ export default function Index() {
                 </ThemedText>
             </ThemedView>
 
-                <CustomCarousel images={["https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg", "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg"]} />
+                <CustomCarousel images={["@/assets/images/carousel-image1.png", "@/assets/images/carousel-images.png"]} />
 
             <ThemedView style={styles.uploadingContainer}>
-                <ThemedView style={{ ...styles.uploadCard, width: "50%", backgroundColor: colors.button_colors.primary }} onTouchEnd={() => { }}>
+                <ThemedView style={{ ...styles.uploadCard, width: "50%", backgroundColor: colors.button_colors.primary }} onTouchEnd={handleShowSoon}>
                     <Ionicons name="document-text" size={50} color={colors.button_colors.neutral_default} />
-                    <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
+                    <ThemedText  type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
                         Add by uploading
                     </ThemedText>
                 </ThemedView>
@@ -207,7 +265,7 @@ export default function Index() {
             <ThemedView style={styles.bottomContainer}>
 
                 <ThemedText type="defaultSemiBold" style={{ color: colors.button_colors.primary }} onPress={() => { router.push("/(logged-in)/(tabs)/profile") }}>
-                    Update your details
+                    Remove your details
                 </ThemedText>
                 <Ionicons name="arrow-forward" size={18} color={colors.button_colors.primary} onPress={() => { router.push("/(logged-in)/(tabs)/profile") }} />
             </ThemedView>

@@ -1,8 +1,7 @@
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY
-export const getGeminiCompletions = async (prompt: string) => {
+export const getGeminiCompletions = async (prompt: string, GeminiApiKey: string) => {
     try{
 
-    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GeminiApiKey}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

@@ -1,6 +1,7 @@
 export const StorageKeys = {
     "geminiApiKey":"",
-    "userData":""
+    "userData":"", 
+    "syncData":""
 }
 export type SecureStorageKeyType = keyof typeof StorageKeys;
 export type GeminiDataType = {

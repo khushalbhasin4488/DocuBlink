@@ -14,11 +14,10 @@ type ThemedDialogProps = {
     cancelTitle?: string
     confirmTitle?: string
     description?: string
-    result: boolean
     setresult : (x: boolean) => void
 
 }
-export const ThemedDialog = ({ visible, setVisible, description, style, cancelTitle, confirmTitle, result, setresult, ...otherProps }: ThemedDialogProps) => {
+export const ThemedDialog = ({ visible, setVisible, description, style, cancelTitle, confirmTitle,  setresult, ...otherProps }: ThemedDialogProps) => {
     const colors = useThemeColor()
     
     const handleCancel = () => {

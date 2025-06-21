@@ -18,14 +18,15 @@ export default function ProfileScreen() {
     const colors = useThemeColor()
     const user = GoogleSignin.getCurrentUser()
     const [deleteDataVisible, setDeleteDataVisible] = useState(false)
-    const [logoutVisible, setLogoutVisible] = useState(false)
-    // const [showEditGrid, setShowEditGrid] = useState(false)
-    const [loggedOut, setLoggedOut] = useState(false)
     const [deleteData, setDeleteData] = useState(false)
+    const [logoutVisible, setLogoutVisible] = useState(false)
+    const [loggedOut, setLoggedOut] = useState(false)
+    const [geminiKeyDeleteVisible, setGeminiKeyDeleteVisible] = useState(false)
+    const [geminiKeyDelete, setGeminiKeyDelete] = useState(false)
     const { reset: resetFormStore,webViewKey,setWebViewKey, setScript , setShowWebView} = useFormStore()
 
     const navigation = useNavigation()
-    const {deleteStorage} = useDeleteStorage()
+    const {deleteStorage, deleteKey} = useDeleteStorage()
     const handleLogoutConfirmed = async () => {
         try {
             await handleGoogleLogout()
@@ -43,18 +44,19 @@ export default function ProfileScreen() {
                 clearTimeout(timer);
             });
                     `)
-            // setScript(`
-            //         document.cookie.split(";").forEach((c) => {
-            //             document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-            //         });
-            //         localStorage.clear();
-            //         sessionStorage.clear();
-            //         window.location.href = "https://accounts.google.com/Logout";
-            //     `)
             setWebViewKey(webViewKey+1)
             navigation.dispatch(
                 StackActions.replace("index")
             )
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+    const handleGeminiKeyDeletionConfirmed = async () => {
+        try {
+            console.log("here")
+            await deleteKey("geminiApiKey")
         }
         catch (err) {
             console.error(err)
@@ -72,11 +74,20 @@ export default function ProfileScreen() {
     useEffect(() => {
         if (deleteData) {
             // Perform delete data action here
+            deleteStorage()
             console.log("User data deleted");
             setDeleteData(false);
         }
     }
         , [deleteData]);
+
+    useEffect(()=>{
+        if(geminiKeyDelete){
+            handleGeminiKeyDeletionConfirmed()
+            setGeminiKeyDelete(false)
+            setGeminiKeyDeleteVisible(false)
+        }
+    },[geminiKeyDelete])    
 
     return (
         <ScrollView style={[styles.rootContainer, { backgroundColor: colors.backgrounds.main_background }]}>
@@ -87,9 +98,10 @@ export default function ProfileScreen() {
                 </ThemedText>
             </ThemedView>
             <SizeBox size={20} />
-            <ThemedDialog setVisible={setLogoutVisible} visible={logoutVisible} result={loggedOut} setresult={setLoggedOut} cancelTitle="Cancel" confirmTitle="Logout" description="Are you sure you want to logout?" />
+            <ThemedDialog setVisible={setLogoutVisible} visible={logoutVisible}  setresult={setLoggedOut} cancelTitle="Cancel" confirmTitle="Logout" description="Are you sure you want to logout?" />
 
-            <ThemedDialog setVisible={setDeleteDataVisible} visible={deleteDataVisible} result={deleteData} setresult={setDeleteData} cancelTitle="Cancel" confirmTitle="Delete" description="Are you sure you want to delete your data?" />
+            <ThemedDialog setVisible={setDeleteDataVisible} visible={deleteDataVisible}  setresult={setDeleteData} cancelTitle="Cancel" confirmTitle="Delete" description="Are you sure you want to delete your data?" />
+            <ThemedDialog setVisible={setGeminiKeyDeleteVisible} visible={geminiKeyDeleteVisible}  setresult={setGeminiKeyDelete} cancelTitle="Cancel" confirmTitle="Delete" description="Are you sure you want to reset Gemini Key ?" />
 
 
             <ThemedView style={styles.listContainer}>
@@ -112,7 +124,13 @@ export default function ProfileScreen() {
                         Delete Data
                     </ThemedText>
                 </ThemedButton>
-
+                <ThemedButton type="neutral_default" style={[{
+                    borderColor: colors.button_colors.primary,
+                }, styles.listView]} onPress={() => { setGeminiKeyDeleteVisible(true) }}>
+                    <ThemedText type="defaultSemiBold">
+                        Reset Gemini Key
+                    </ThemedText>
+                </ThemedButton>
                 <ThemedButton type="neutral_default" style={[{
                     borderColor: colors.button_colors.primary,
                 }, styles.listView]}

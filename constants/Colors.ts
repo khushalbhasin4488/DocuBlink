@@ -48,7 +48,7 @@ export const Colors = {
         "success": "#34C759",
         "danger": "#E54B4B",
         "warning": "#F7B801",
-        "info": "#3A86FF",
+        "info": "#7A7FE3",
         "neutral_default": "#e3d7ff"
     },
     "main_accent": {

@@ -4,14 +4,14 @@
     "slug": "Docublink",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/splash-icon.png",
     "scheme": "docublink",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.khushalbhasin.Docublink",
-      "config":{
+      "config": {
         "usesNonExemptEncryption": false
       }
     },
@@ -22,10 +22,16 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.INTERNET",
         "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.READ_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/splash-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -43,8 +49,13 @@
         {
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
+          "imageHeight": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "black", 
+          "dark": {
+            "image": "./assets/images/splash-icon.png",
+            "backgroundColor": "#000000"
+          }
         }
       ],
       [
@@ -53,17 +64,13 @@
           "iosUrlScheme": "com.googleusercontent.apps.713015174361-1mthvomoj9a9619up32orpf84jmntrh4"
         }
       ],
-       
-        [
-          "expo-secure-store",
-          {
-            "configureAndroidBackup": true,
-            "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
-          }
-        ]
-      
-  
-
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
@@ -73,6 +80,10 @@
       "eas": {
         "projectId": "99359c83-e4ad-4200-a414-d3717b74e6f6"
       }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/99359c83-e4ad-4200-a414-d3717b74e6f6"
     }
   }
 }

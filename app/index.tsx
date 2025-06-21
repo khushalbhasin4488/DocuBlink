@@ -1,3 +1,4 @@
+import { SizeBox } from "@/components/SizeBox";
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -5,29 +6,35 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { handleGoogleSignIn } from "@/modules/firebase/utils/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
   const colors = useThemeColor();
-  
+
   const onSignInClick = async () => {
     try {
       await handleGoogleSignIn();
       router.replace("/(logged-in)/(tabs)");
-    } catch(err) {
+    } catch (err) {
       console.error("Error during Google Sign-In: ", err);
     }
   }
 
   return (
     <ThemedView style={{ ...styles.rootContainer }}>
-      <View style={styles.hedingView}>
-        <ThemedText type="title" style={{ fontWeight: "800" }}>Docublink</ThemedText>
-        <ThemedText type="subtitle" style={{ color: colors.text_colors.secondary_text }}>Your details, everywhere - instantly</ThemedText>
-      </View>
-
-       <View style={styles.buttonView}>
+      <ThemedView style={styles.imageContainer}>
+        <Image
+          source={require('@/assets/images/landing2.jpeg')}
+          style={{ width: "100%", height: "100%", flex: 1 }}
+        />
+        <View style={styles.hedingView}>
+          <ThemedText type="title" style={[styles.mainHeading, { backgroundColor:colors.backgrounds.main_background ,}]}>Docublink</ThemedText>
+          <SizeBox size={20}/>
+          <ThemedText type="subtitle" style={{ color: colors.text_colors.secondary_text , paddingTop: 10}}>Your details, everywhere - instantly</ThemedText>
+        </View>
+      </ThemedView>
+      <View style={styles.buttonView}>
         <ThemedButton style={{ ...styles.container }} type="neutral_default" onPress={onSignInClick}>
           <ThemedText style={{ color: colors.text_colors.primary_text }} type="subtitle">SignIn
           </ThemedText>
@@ -65,19 +72,21 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 100,
     paddingBottom: 150,
   },
   text: {
     fontSize: 20,
   },
   hedingView: {
+    position: "relative",
     display: "flex",
     flexDirection: "column",
     textAlign: "center",
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    paddingTop: 10,
+    gap: 10,
   },
   buttonView: {
     display: "flex",
@@ -94,5 +103,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: 'rgba(255, 0, 0, 0.1)',
   },
+  imageContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: "70%",
+  },
+  mainHeading: {
+    fontWeight: "800",
+    position: "absolute",
+    top: -20,
+    width: "100%",
+    textAlign: "center",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 20
+  }
 })
 

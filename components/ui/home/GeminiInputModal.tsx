@@ -3,7 +3,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { useSetGeminiKey } from '@/modules/ai/hooks/useSetGeminiKey';
 import { useLoadStates } from '@/modules/secure-storage/hooks/useLoadStates';
 import { useAiStore } from '@/store/aiSlice';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ActivityIndicator, Modal, StyleSheet, TextInput, View } from 'react-native';
 import { ThemedButton } from '../../ThemedButton';
 import { ThemedText } from '../../ThemedText';
@@ -32,6 +32,9 @@ export function GeminiInputModal({  onClose }: InputModalProps) {
 
     }
   };
+  useEffect(()=>{
+    console.log("geminiapikeystate chnaged")
+  },[geminiApiKeyState])
 
 
 

@@ -42,6 +42,7 @@ class SecureStoreClient {
     public async handleDeleteStoreSecure(key: SecureStorageKeyType) {
         try {
             await SecureStore.deleteItemAsync(key);
+            
         }
         catch (err) {
             console.error("Error deleting key:", err);
@@ -52,6 +53,7 @@ class SecureStoreClient {
     public handleClearStoreSecure = async () => {
         try {
             await this.handleDeleteStoreSecure("geminiApiKey");
+            await this.handleDeleteStoreSecure("userData");
         }
         catch (err) {
             console.error("Error clearing store:", err);
