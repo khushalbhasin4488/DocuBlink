@@ -27,12 +27,15 @@ export default function Index() {
     const{ geminiApiKeyState} = useAiStore()
     const colors = useThemeColor()
     const drawerRef = useRef<DataDrawerRef>(null);
-    const {setformhtml,  formhtml, cookies, script, webViewKey,setWebViewKey, setCookies, setFormUrl, showWebView, setShowWebView, formUrl, setScript } = useFormStore()
+    const {setformhtml,  formhtml, cookies, script, webViewKey,setWebViewKey, setCookies, setFormUrl, showWebView, setShowWebView, formUrl, setScript, canReload, setCanReload
+     } = useFormStore()
     const { getObjectKeys , getUserInfo} = useUserDataStore();
     const [currentUrl, setCurrentUrl] = useState<string>("");
+    const [shouldShowSignIn, setShouldShowSignIn] = useState(false);
     const handleAddManually = () => {
         drawerRef.current?.present();
     };
+
 
     const handleShowSoon = () => {
         
@@ -65,16 +68,26 @@ export default function Index() {
         console.log('Received message from WebView:', receivedCookies);
         if (receivedCookies) {
             setCookies(receivedCookies);
+            setShouldShowSignIn(false);
             console.log('Cookies set successfully');
         } else {
             console.log('Received empty cookies from WebView');
+            setShouldShowSignIn(true);
         }
     };
 
     const handleCloseWebView = () => {
         setShowWebView(false);
-        setFormUrl("")
         setformhtml(null)
+        setScript(`let timer = setTimeout(() => {    
+            window.location.href = ${formUrl};
+            }
+            , 1000);
+            window.addEventListener("beforeunload", () => {
+                clearTimeout(timer);
+                });`);
+                setFormUrl("")
+        setCanReload(true);
     };
 
     const handleOpenInBrowser = async () => {
@@ -93,9 +106,12 @@ export default function Index() {
         if(navState.url.includes("https://accounts.google.com/")){
             console.log('Detected Google sign-in page, clearing script');
             setScript("");
+         
         }
         else if(navState.url.includes("https://myaccount.google.com/")){
+
             console.log('Detected Google account page, setting redirect script');
+            setShouldShowSignIn(false)
             setScript(`
             let timer = setTimeout(() => {    
                     window.location.href = ${formUrl};
@@ -105,7 +121,10 @@ export default function Index() {
                 clearTimeout(timer);
             });
             `);
+       
         }
+   
+      
     };
     const handleFetchFormHTML = async () => {
         console.log("fetching form html")
@@ -174,7 +193,7 @@ export default function Index() {
         }
 },[cookies])
     useEffect(()=>{
-        if(script){
+        if(script ){
             setWebViewKey(webViewKey+1)
         }
     },[script])
@@ -198,7 +217,7 @@ export default function Index() {
                     </View>
                     <WebView
                         style={styles.WebViewStyle}
-                        source={{ uri: formUrl }}
+                        source={{ uri: shouldShowSignIn ? "https://accounts.google.com/ServiceLogin" : formUrl }}
                         injectedJavaScript={script}
                         onMessage={onMessage}
                         onNavigationStateChange={handleNavigationStateChange}

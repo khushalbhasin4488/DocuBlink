@@ -52,7 +52,8 @@ export const Colors = {
         "neutral_default": "#e3d7ff"
     },
     "main_accent": {
-        "accent": "#00A99D"
+        "accent": "#00A99D",
+        "secondary_accent":"#6530b7"
     }
 }
 

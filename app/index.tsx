@@ -35,12 +35,15 @@ export default function Index() {
         </View>
       </ThemedView>
       <View style={styles.buttonView}>
-        <ThemedButton style={{ ...styles.container }} type="neutral_default" onPress={onSignInClick}>
-          <ThemedText style={{ color: colors.text_colors.primary_text }} type="subtitle">SignIn
+        <ThemedButton style={{ ...styles.container, backgroundColor: colors.main_accent.secondary_accent }} type="neutral_default" onPress={onSignInClick}>
+          <ThemedText style={{ color: colors.button_colors.neutral_default 
+           }} type="subtitle">SignIn
           </ThemedText>
 
           <View style={{ paddingLeft: 8 }}>
-            <Ionicons name="logo-google" size={18} />
+            <Ionicons name="logo-google" size={16} style={{
+              color:colors.button_colors.neutral_default
+            }} />
           </View>
           {/* <Ionicons name="log-in" size={32} color={colors.button_colors.primary} /> */}
         </ThemedButton>
@@ -62,8 +65,7 @@ const styles = StyleSheet.create({
     width: "80%",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 10
-
+    height:50
   },
   rootContainer: {
     flex: 1,

@@ -9,7 +9,7 @@ import { StyleSheet, View } from "react-native"
 
 export const GoogleFormInput = () => {
     const colors = useThemeColor()
-    const { formUrl, setFormUrl, setLoading, setScript, setShowWebView } = useFormStore()
+    const { setWebViewKey, webViewKey, formUrl, setFormUrl, setLoading, setScript, setShowWebView } = useFormStore()
     
     const handleOnSubmitForm = async () => {
         if (!formUrl) {

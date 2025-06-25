@@ -14,12 +14,15 @@ export interface FormStore{
     setShowWebView: (show: boolean) => void;
     formhtml: string | null;
     setformhtml: (html: string | null) => void;
+    setCanReload:(canReload: boolean) => void;
+    canReload: boolean;
     reset: () => void;
 }
 
 export const useFormStore = create<FormStore>((set) => ({
     formUrl: '',
-
+    canReload: true,
+    setCanReload: (canReload: boolean) => set({ canReload }),
     setFormUrl: (url: string) => set({ formUrl: url }),
     webViewKey: 0,
     setWebViewKey: (key: number) => set({ webViewKey: key }),
