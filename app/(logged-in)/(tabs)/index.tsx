@@ -31,7 +31,8 @@ export default function Index() {
      } = useFormStore()
     const { getObjectKeys , getUserInfo} = useUserDataStore();
     const [currentUrl, setCurrentUrl] = useState<string>("");
-    const [shouldShowSignIn, setShouldShowSignIn] = useState(false);
+    // Simplified - no complex auth logic
+    
     const handleAddManually = () => {
         drawerRef.current?.present();
     };
@@ -65,14 +66,11 @@ export default function Index() {
 
     const onMessage = (event: { nativeEvent: { data: string; }; }) => {
         const receivedCookies = event.nativeEvent.data;
-        console.log('Received message from WebView:', receivedCookies);
-        if (receivedCookies) {
+        console.log('Received cookies from WebView:', receivedCookies);
+        
+        if (receivedCookies && receivedCookies.trim() !== '') {
+            console.log('Setting cookies for form processing');
             setCookies(receivedCookies);
-            setShouldShowSignIn(false);
-            console.log('Cookies set successfully');
-        } else {
-            console.log('Received empty cookies from WebView');
-            setShouldShowSignIn(true);
         }
     };
 
@@ -100,35 +98,31 @@ export default function Index() {
         }
     };
 
-    const handleNavigationStateChange = (navState: any) => {
-        console.log('Navigation state changed:', navState.url);
-        setCurrentUrl(navState.url);
-        if(navState.url.includes("https://accounts.google.com/")){
-            console.log('Detected Google sign-in page, clearing script');
-            setScript("");
-         
-        }
-        else if(navState.url.includes("https://myaccount.google.com/")){
+    // Simplified logout - just clear data
+    const handleLogoutWebView = () => {
+        setCookies('');
+        setformhtml(null);
+        setScript('');
+    };
 
-            console.log('Detected Google account page, setting redirect script');
-            setShouldShowSignIn(false)
-            setScript(`
-            let timer = setTimeout(() => {    
-                    window.location.href = ${formUrl};
-            }
-            , 1000);
-            window.addEventListener("beforeunload", () => {
-                clearTimeout(timer);
-            });
-            `);
-       
-        }
-   
-      
+    const handleNavigationStateChange = (navState: any) => {
+        setCurrentUrl(navState.url);
+        console.log('Navigation to:', navState.url);
     };
     const handleFetchFormHTML = async () => {
         console.log("fetching form html")
+        console.log("Debug values:", { 
+            formhtml: !!formhtml, 
+            formUrl: formUrl, 
+            cookies: !!cookies,
+            cookiesLength: cookies?.length || 0
+        })
         if(formhtml || !formUrl || !cookies){
+            console.log("Skipping fetch - conditions not met:", {
+                hasFormhtml: !!formhtml,
+                missingFormUrl: !formUrl,
+                missingCookies: !cookies
+            })
             return
         }
         let data = await getFormhtml(formUrl, cookies)
@@ -184,19 +178,44 @@ export default function Index() {
         }
         let populated_script = PopulatePromptWithUserInfo(script,getUserInfo() )
         console.log("response", populated_script)
+        
+        // Set the form-filling script - it will be injected into the current form
         setScript(populated_script)
+        console.log("Form-filling script ready and will be injected")
     }
 
     useEffect(()=>{
+        console.log("useEffect [cookies] triggered:", { 
+            cookies: !!cookies, 
+            cookiesValue: cookies,
+            cookiesLength: cookies?.length || 0
+        })
         if(cookies){
+            console.log("Cookies exist, calling handleFetchFormHTML")
             handleFetchFormHTML()
+        } else {
+            console.log("No cookies, skipping handleFetchFormHTML")
         }
-},[cookies])
+    },[cookies])
     useEffect(()=>{
-        if(script ){
+        if(script && script.trim() !== ""){
+            console.log('Script changed, updating WebView key:', webViewKey + 1);
             setWebViewKey(webViewKey+1)
         }
     },[script])
+
+    // Simple script to get cookies for form processing
+    const getCookiesScript = `
+        (function() {
+            setTimeout(() => {
+                const cookies = document.cookie;
+                console.log('Sending cookies for form processing');
+                window.ReactNativeWebView && window.ReactNativeWebView.postMessage(cookies);
+            }, 1000);
+        })();
+        true;
+    `;
+
     return (
         <ThemedView style={styles.rootContainer}>
             {showWebView && formUrl &&
@@ -209,6 +228,12 @@ export default function Index() {
                             <Ionicons name="open-outline" size={24} color={colors.text_colors.primary_text} />
                         </TouchableOpacity>
                         <TouchableOpacity 
+                            style={styles.logoutButton} 
+                            onPress={handleLogoutWebView}
+                        >
+                            <Ionicons name="refresh-outline" size={24} color={colors.text_colors.primary_text} />
+                        </TouchableOpacity>
+                        <TouchableOpacity 
                             style={styles.closeButton} 
                             onPress={handleCloseWebView}
                         >
@@ -217,8 +242,8 @@ export default function Index() {
                     </View>
                     <WebView
                         style={styles.WebViewStyle}
-                        source={{ uri: shouldShowSignIn ? "https://accounts.google.com/ServiceLogin" : formUrl }}
-                        injectedJavaScript={script}
+                        source={{ uri: formUrl }}
+                        injectedJavaScript={script || getCookiesScript}
                         onMessage={onMessage}
                         onNavigationStateChange={handleNavigationStateChange}
                         onError={(syntheticEvent) => {
@@ -231,9 +256,6 @@ export default function Index() {
                         }}
                         onLoadEnd={() => {
                             console.log('WebView load ended');
-                        }}
-                        onLoadStart={() => {
-                            console.log('WebView load started');
                         }}
                         key={webViewKey}
                         javaScriptEnabled={true}
@@ -400,6 +422,11 @@ const styles = StyleSheet.create({
     browserButton: {
         padding: 8,
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderRadius: 20,
+    },
+    logoutButton: {
+        padding: 8,
+        backgroundColor: 'rgba(255, 0, 0, 0.8)',
         borderRadius: 20,
     },
 })
