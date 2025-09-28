@@ -271,9 +271,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Firebase** for reliable backend services
 - **React Native Community** for amazing open-source libraries
 
-## 📞 Support
-
-For support, email support@docublink.app or create an issue on GitHub.
 
 ## 🔮 Roadmap
 
