@@ -4,6 +4,7 @@ import { CustomCarousel } from "@/components/ui/home/CustomCarousel";
 import { DataDrawer, DataDrawerRef } from "@/components/ui/home/DataDrawer";
 import { GoogleFormInput } from "@/components/ui/home/GoogleFormInput";
 import { SyncSwitch } from "@/components/ui/home/SyncSwitch";
+import { scripts } from "@/constants/scripts";
 import { usePrompt } from "@/hooks/usePrompt";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { getGeminiCompletions } from "@/services/geminiClient";
@@ -20,8 +21,6 @@ import { Dimensions, Linking, StyleSheet, TouchableOpacity, View } from "react-n
 import WebView from "react-native-webview";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-const MAX_HEIGHT = screenHeight;
-const MAX_WIDTH = screenWidth;
 
 export default function Index() {
     const{ geminiApiKeyState} = useAiStore()
@@ -36,7 +35,6 @@ export default function Index() {
     const handleAddManually = () => {
         drawerRef.current?.present();
     };
-
 
     const handleShowSoon = () => {
         
@@ -99,11 +97,6 @@ export default function Index() {
     };
 
     // Simplified logout - just clear data
-    const handleLogoutWebView = () => {
-        setCookies('');
-        setformhtml(null);
-        setScript('');
-    };
 
     const handleNavigationStateChange = (navState: any) => {
         setCurrentUrl(navState.url);
@@ -204,17 +197,7 @@ export default function Index() {
         }
     },[script])
 
-    // Simple script to get cookies for form processing
-    const getCookiesScript = `
-        (function() {
-            setTimeout(() => {
-                const cookies = document.cookie;
-                console.log('Sending cookies for form processing');
-                window.ReactNativeWebView && window.ReactNativeWebView.postMessage(cookies);
-            }, 1000);
-        })();
-        true;
-    `;
+    const getCookiesScript = scripts["get-cookies"];
 
     return (
         <ThemedView style={styles.rootContainer}>
@@ -226,12 +209,6 @@ export default function Index() {
                             onPress={handleOpenInBrowser}
                         >
                             <Ionicons name="open-outline" size={24} color={colors.text_colors.primary_text} />
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            style={styles.logoutButton} 
-                            onPress={handleLogoutWebView}
-                        >
-                            <Ionicons name="refresh-outline" size={24} color={colors.text_colors.primary_text} />
                         </TouchableOpacity>
                         <TouchableOpacity 
                             style={styles.closeButton} 
@@ -426,7 +403,6 @@ const styles = StyleSheet.create({
     },
     logoutButton: {
         padding: 8,
-        backgroundColor: 'rgba(255, 0, 0, 0.8)',
         borderRadius: 20,
     },
 })

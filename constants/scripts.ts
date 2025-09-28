@@ -7,22 +7,9 @@ export const scripts = {
             window.ReactNativeWebView.postMessage(cookies);
         }
 
-        // Try immediately
         sendCookies();
-
-        // Also try after a delay to ensure page is loaded
          setTimeout(sendCookies, 2000);
 
-        // And try when the page is fully loaded
-        // if (document.readyState === 'complete') {
-        //     sendCookies();
-        // } else {
-        //     window.addEventListener('load', sendCookies);
-        // }
-
-        // Log when script is injected
-        // console.log('Cookie collection script injected');
-        // true;
     })();
     `,
   "fill-form":`setTimeout(() => {

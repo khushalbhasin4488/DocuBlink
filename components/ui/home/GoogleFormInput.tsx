@@ -38,7 +38,7 @@ export const GoogleFormInput = () => {
             return
         }
         setLoading(true);
-        // Set the cookie collection script before showing WebView
+        
         setScript(scripts["get-cookies"]);
         setShowWebView(true);
         setLoading(false);
