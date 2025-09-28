@@ -4,6 +4,7 @@ import { CustomCarousel } from "@/components/ui/home/CustomCarousel";
 import { DataDrawer, DataDrawerRef } from "@/components/ui/home/DataDrawer";
 import { GoogleFormInput } from "@/components/ui/home/GoogleFormInput";
 import { SyncSwitch } from "@/components/ui/home/SyncSwitch";
+import { UploadingModal } from "@/components/ui/home/UploadingModal";
 import { scripts } from "@/constants/scripts";
 import { usePrompt } from "@/hooks/usePrompt";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -30,7 +31,8 @@ export default function Index() {
      } = useFormStore()
     const { getObjectKeys , getUserInfo} = useUserDataStore();
     const [currentUrl, setCurrentUrl] = useState<string>("");
-    // Simplified - no complex auth logic
+    const [showUploadingModal, setShowUploadingModal] = useState<boolean>(false);
+
     
     const handleAddManually = () => {
         drawerRef.current?.present();
@@ -170,13 +172,14 @@ export default function Index() {
             return
         }
         let populated_script = PopulatePromptWithUserInfo(script,getUserInfo() )
-        console.log("response", populated_script)
         
-        // Set the form-filling script - it will be injected into the current form
         setScript(populated_script)
         console.log("Form-filling script ready and will be injected")
     }
 
+    const handleShowUploadingModal = () => {
+        setShowUploadingModal(true);
+    }
     useEffect(()=>{
         console.log("useEffect [cookies] triggered:", { 
             cookies: !!cookies, 
@@ -242,6 +245,7 @@ export default function Index() {
                     />
                 </View>
             }
+            <UploadingModal visible={showUploadingModal} onClose={() => setShowUploadingModal(false)} />
             <View style={styles.syncView}>
                 <ThemedText type="defaultSemiBold">sync</ThemedText>
                 <SyncSwitch />
@@ -262,7 +266,7 @@ export default function Index() {
                 <CustomCarousel images={["@/assets/images/carousel-image1.png", "@/assets/images/carousel-images.png"]} />
 
             <ThemedView style={styles.uploadingContainer}>
-                <ThemedView style={{ ...styles.uploadCard, width: "50%", backgroundColor: colors.button_colors.primary }} onTouchEnd={handleShowSoon}>
+                <ThemedView style={{ ...styles.uploadCard, width: "50%", backgroundColor: colors.button_colors.primary }} onTouchEnd={handleShowUploadingModal}>
                     <Ionicons name="document-text" size={50} color={colors.button_colors.neutral_default} />
                     <ThemedText  type="defaultSemiBold" style={{ color: colors.button_colors.neutral_default }}>
                         Add by uploading
