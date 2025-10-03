@@ -1,23 +1,24 @@
+
 export const getGeminiResult = async (input: string, apiKey: string) => {
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(
-                {
-                    "contents": [
-                      {
-                        "parts": [
-                          {
-                            "text": input
-                          }
-                        ]
-                      }
-                    ]
+        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-goog-api-key': apiKey
+          },
+          body: JSON.stringify({
+            'contents': [
+              {
+                'parts': [
+                  {
+                    'text':input
                   }
-            ),
+
+                ]
+              }
+            ]
+          })
         });
 
         if (!response.ok) {
