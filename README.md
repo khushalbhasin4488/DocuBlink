@@ -3,6 +3,12 @@
 > **Your details, everywhere - instantly**
 
 Docublink is an intelligent React Native application that revolutionizes form-filling by automatically populating Google Forms with your personal information using AI-powered field detection and mapping.
+>
+<img width="300" height="700" alt="Screenshot 2025-10-03 at 1 55 44 PM" src="https://github.com/user-attachments/assets/d62f2106-7a1b-407e-a152-ab42e8f8f344" />
+<img width="300" height="700" alt="Screenshot 2025-10-03 at 1 56 45 PM" src="https://github.com/user-attachments/assets/fb074c38-ffa9-4fe3-9b2e-efdcc5391776" />
+<img width="300" height="700" alt="Screenshot 2025-10-03 at 2 10 04 PM" src="https://github.com/user-attachments/assets/54d6b68b-c002-4340-88e8-0e5749ec0219" />
+<img width="300" height="700" alt="Screenshot 2025-10-03 at 2 10 29 PM" src="https://github.com/user-attachments/assets/6f5ba2e7-014d-4645-b9c2-4e4858d9b0e9" />
+<img width="300" height="700" alt="Screenshot 2025-10-03 at 2 11 17 PM" src="https://github.com/user-attachments/assets/fafe5a53-bf92-49f9-a298-6e1390176df5" />
 
 ## 🌟 Features
 
